@@ -44,7 +44,10 @@ import { MailviewComponent } from './mailview/mailview.component';
 import { HomeComponent } from './home/home.component';
 import { FooterComponent } from './footer/footer.component';
 
+import { HttpClientModule } from '@angular/common/http';
+import { AngularEditorModule } from '@kolkov/angular-editor';
 
+import { FormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     AppComponent,
@@ -88,8 +91,11 @@ import { FooterComponent } from './footer/footer.component';
     MatSnackBarModule,
     MatTableModule,
     MatSortModule,
-    MatPaginatorModule
+    MatPaginatorModule,
 
+    HttpClientModule,
+    AngularEditorModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
