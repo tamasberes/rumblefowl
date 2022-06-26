@@ -1,0 +1,11 @@
+<mat-accordion multi="true">
+    <mat-expansion-panel *ngFor="let item of items">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                {{item.title}}
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div>{{item.description}}</div>
+    </mat-expansion-panel>
+</mat-accordion>
