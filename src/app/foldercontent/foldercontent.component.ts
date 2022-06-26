@@ -18,6 +18,10 @@ const ELEMENT_DATA: PeriodicElement[] = [
   { subject: "lorem ipsum", from: 'grtdxfewaioj@example.com', date: new Date() },
   { subject: "lorem ipsum", from: 'grtdxfewaioj@example.com', date: new Date() },
   { subject: "lorem ipsum", from: 'grtdxfewaioj@example.com', date: new Date() },
+  { subject: "lorem ipsum", from: 'grtdxfewaioj@example.com', date: new Date() },
+  { subject: "lorem ipsum", from: 'grtdxfewaioj@example.com', date: new Date() },
+  { subject: "lorem ipsum", from: 'grtdxfewaioj@example.com', date: new Date() },
+  { subject: "lorem ipsum", from: 'grtdxfewaioj@example.com', date: new Date() },
 ];
 
 
