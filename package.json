@@ -22,6 +22,7 @@
     "@angular/router": "^14.0.0",
     "@kolkov/angular-editor": "^2.1.0",
     "angular-resizable-element": "^5.0.0",
+    "ngx-logger": "^5.0.11",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

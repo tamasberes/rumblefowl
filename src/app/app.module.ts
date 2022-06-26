@@ -46,8 +46,10 @@ import { FooterComponent } from './footer/footer.component';
 
 import { HttpClientModule } from '@angular/common/http';
 import { AngularEditorModule } from '@kolkov/angular-editor';
+import { LoggerModule, NGXLogger, NgxLoggerLevel } from 'ngx-logger';
 
 import { FormsModule } from '@angular/forms';
+import { ManagemailboxesComponent } from './managemailboxes/managemailboxes.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -57,7 +59,8 @@ import { FormsModule } from '@angular/forms';
     FoldercontentComponent,
     MailviewComponent,
     HomeComponent,
-    FooterComponent
+    FooterComponent,
+    ManagemailboxesComponent
   ],
   imports: [
     BrowserModule,
@@ -95,7 +98,10 @@ import { FormsModule } from '@angular/forms';
 
     HttpClientModule,
     AngularEditorModule,
-    FormsModule
+    FormsModule,
+    LoggerModule.forRoot({
+      level: NgxLoggerLevel.DEBUG
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]
