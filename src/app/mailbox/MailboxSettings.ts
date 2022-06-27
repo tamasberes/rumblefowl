@@ -1,7 +1,7 @@
 import { Title } from "@angular/platform-browser";
 
 export interface MailboxSettings{
-    title: string;
+    index: number;
     userName: string;
     emailAddress: string;
     signature: string;

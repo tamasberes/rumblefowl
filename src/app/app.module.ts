@@ -48,7 +48,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AngularEditorModule } from '@kolkov/angular-editor';
 import { LoggerModule, NGXLogger, NgxLoggerLevel } from 'ngx-logger';
 
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ManagemailboxesComponent } from './managemailboxes/managemailboxes.component';
 @NgModule({
   declarations: [
@@ -101,7 +101,8 @@ import { ManagemailboxesComponent } from './managemailboxes/managemailboxes.comp
     FormsModule,
     LoggerModule.forRoot({
       level: NgxLoggerLevel.DEBUG
-    })
+    }),
+    ReactiveFormsModule 
   ],
   providers: [],
   bootstrap: [AppComponent]

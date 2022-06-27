@@ -1,7 +1,11 @@
 <mat-toolbar>
-    <div class="button-row">
-        <button mat-button color="primary">Sync Mail</button>
-        <button mat-button color="accent">New E-mail</button>
-        <button mat-button color="accent" (click)="onManageMailboxesClicked()">Manage Mailboxes</button>
-    </div>
+    <button mat-button color="primary">Sync Mail</button>
+    <button mat-button color="accent">New E-mail</button>
+    <button mat-button color="accent" (click)="onManageMailboxesClicked()">Manage Mailboxes</button>
+
+    <span class="example-spacer"></span>
+
+    <mat-form-field>
+        <input type=" text" matInput placeholder="Search">
+    </mat-form-field>
 </mat-toolbar>
