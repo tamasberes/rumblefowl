@@ -1,9 +1,11 @@
 <div style="display: flex; flex-direction: row; max-height: 70vh; min-width: 50vw; margin-right: 18px;">
 
 
-    
+
     <mat-selection-list #shoes [multiple]="false" style="width: 35vh;">
         <button mat-stroked-button color="primary" (click)="onAddNewMailboxClicked()">Add new Mailbox</button>
+
+        <mat-divider style="margin-top: 16px;"></mat-divider>
 
         <mat-list-option *ngFor="let item of items" [value]="item" (click)="onEmailAdressSelected(item)">
             <span class="email">{{item.emailAddress}}</span>
