@@ -7,7 +7,7 @@ import { MatExpansionPanelDescription } from '@angular/material/expansion';
   providedIn: 'root'
 })
 export class MailboxesService {
-
+  
   constructor(private logger: NGXLogger) { }
 
   get(): MailboxSettings[] {

@@ -19,6 +19,8 @@ export class ManagemailboxesComponent implements OnInit {
   constructor(public dialog: MatDialog, private mailboxesService: MailboxesService, private logger: NGXLogger) {
     this.items = mailboxesService.get();
     this.onEmailAdressSelected(this.items[0]);
+
+    this.mailboxesService.test()
   }
 
   openDialog() {

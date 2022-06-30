@@ -1,0 +1,37 @@
+import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
+import 'package:rumblefowl/ui/components/mailbox_folders.dart';
+
+import '../components/folders_content.dart';
+import '../components/mail_actions_header.dart';
+import '../components/mail_view.dart';
+import '../components/mailbox_headers.dart';
+
+final log = Logger('HomeWidget');
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Colors.grey[100],
+        body: Column(children: [
+          const MailActionsHeader(),
+          const MailboxesHeader(),
+          Expanded(
+              child: Row(
+            children: [
+              MailboxFolders(),
+              FolderContent(),
+              Expanded(child: MailView()),
+            ],
+          )),
+        ]));
+  }
+}
