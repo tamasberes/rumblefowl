@@ -4,13 +4,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rumblefowl/ui/screens/home_screen.dart';
 import 'package:logging/logging.dart';
-
+import 'package:provider/provider.dart';
 import 'services/mail/mail_test.dart';
 
 Future<void> main() async {
   setupLogging();
-  runApp(const MyApp());
-  await MailHelper().init();
+  runApp(ChangeNotifierProvider(
+    create: (context) => MailHelper(),
+    child: const MyApp(),
+  ));
 }
 
 void setupLogging() {
@@ -24,7 +26,6 @@ void setupLogging() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

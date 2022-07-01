@@ -5,9 +5,16 @@ import 'package:logging/logging.dart';
 
 final log = Logger('MailboxesHeader');
 
-class MailHelper {
+class MailHelper extends ChangeNotifier {
+  late MailClient mailClient;
 
-  init() async{
+  late Tree<Mailbox?> mailboxes;
+
+  isInitDone() {
+    return mailClient.isConnected;
+  }
+
+  init() async {
     // authenticate
     String email = const String.fromEnvironment('EMAIL_ACCOUNT', defaultValue: 'EMAIL_ACCOUNT');
     String pw = const String.fromEnvironment('EMAIL_PW', defaultValue: 'EMAIL_PW');
@@ -29,26 +36,12 @@ class MailHelper {
     try {
       await mailClient.connect();
       log.info('connected');
-      
-      final mailboxes = await mailClient.listMailboxesAsTree(createIntermediate: false);
-      log.info(mailboxes);
-      await mailClient.selectInbox();
-      final messages = await mailClient.fetchMessages(count: 20);
-      messages.forEach(printInfoMessage);
-      mailClient.eventBus.on<MailLoadEvent>().listen((event) {
-        log.info('New message at ${DateTime.now()}:');
-        log.info(event.message);
-      });
-      await mailClient.startPolling();
-      // generate and send email:
-      //final mimeMessage = buildMessage();
-      //await mailClient.sendMessage(mimeMessage);
+      this.mailClient = mailClient;
+      mailboxes = await mailClient.listMailboxesAsTree(createIntermediate: false);
+
+      notifyListeners();
     } on MailException catch (e) {
       log.info('High level API failed with $e');
     }
-  }
-
-  void printInfoMessage(MimeMessage message) {
-    log.info("log.infoMessage: " + message.toString());
   }
 }
