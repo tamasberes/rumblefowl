@@ -57,7 +57,7 @@ jobs:
           # Filename for archive
           filename: release.zip
           # Base path for archive files
-          path: /build/windows/runner/Release
+          path: build/windows/runner/Release
     
       - name: Release
         uses: softprops/action-gh-release@v1
