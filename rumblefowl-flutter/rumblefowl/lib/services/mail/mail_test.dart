@@ -1,17 +1,21 @@
-import 'dart:io';
 import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 final log = Logger('MailboxesHeader');
 
-class MailHelper extends ChangeNotifier {
+class MailHelper with ChangeNotifier {
   late MailClient mailClient;
 
   late Tree<Mailbox?> mailboxes;
 
   isInitDone() {
     return mailClient.isConnected;
+  }
+
+  getEmailAddress() async {
+    await init();
+    return mailClient.account.email;
   }
 
   init() async {

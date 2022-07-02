@@ -2,17 +2,19 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:rumblefowl/services/mail/hive_manager.dart';
+import 'package:rumblefowl/ui/components/mailbox_settings_dialog.dart';
 import 'package:rumblefowl/ui/screens/home_screen.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'services/mail/mail_test.dart';
 
+final log = Logger('main');
+
 Future<void> main() async {
   setupLogging();
-  runApp(ChangeNotifierProvider(
-    create: (context) => MailHelper(),
-    child: const MyApp(),
-  ));
+  await HiveManager().init();
+  runApp(const MyApp());
 }
 
 void setupLogging() {
