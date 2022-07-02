@@ -58,8 +58,14 @@ jobs:
           filename: release.zip
           # Base path for archive files
           path: build/windows/runner/Release
-    
+
+      - name: Generate release tag
+        id: tag
+        run: |
+          echo "::set-output name=release_tag::UserBuild_$(date +"%Y.%m.%d_%H-%M")"
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
+          tag: ${{ steps.tag.outputs.release_tag }}
           files: release.zip
