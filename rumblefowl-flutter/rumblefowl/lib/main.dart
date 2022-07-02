@@ -3,13 +3,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rumblefowl/services/mail/hive_manager.dart';
-import 'package:rumblefowl/ui/components/mailbox_settings_dialog.dart';
+import 'package:rumblefowl/ui/components/mailbox_setings/mailbox_settings_dialog.dart';
 import 'package:rumblefowl/ui/screens/home_screen.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'services/mail/mail_test.dart';
 
 final log = Logger('main');
+
+//spacing between column items
+const spacingBetweenItemsVertical = 16.0;
+//padding between the edges of the widget and the inside content
+const paddingWidgetEdges = 18.0;
 
 Future<void> main() async {
   setupLogging();
@@ -34,7 +39,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demooh',
       theme: ThemeData(
-        primarySwatch: Colors.teal,
+        primarySwatch: Colors.blue,
       ),
       home: const HomeScreen(),
     );

@@ -1,7 +1,7 @@
 //Top most menu bar. Always shown. Always relates to the selected mailbox
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
-import 'package:rumblefowl/ui/components/mailbox_settings_dialog.dart';
+import 'package:rumblefowl/ui/components/mailbox_setings/mailbox_settings_dialog.dart';
 import 'elevated_button_with_margin.dart';
 
 final log = Logger('MailActionsHeader');
