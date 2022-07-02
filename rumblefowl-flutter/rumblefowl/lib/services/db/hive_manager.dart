@@ -1,6 +1,6 @@
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:rumblefowl/services/mail/mailbox_settings.dart';
+
+import 'mailbox_settings.dart';
 
 const String mailboxesSettingsBoxName = "mailboxesSettings";
 

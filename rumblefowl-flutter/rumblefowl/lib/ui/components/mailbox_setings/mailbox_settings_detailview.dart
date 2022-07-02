@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:rumblefowl/main.dart';
+import 'package:rumblefowl/ui/components/elevated_button_with_margin.dart';
 
-import '../../../services/mail/hive_manager.dart';
-import '../../../services/mail/mailbox_settings.dart';
+import '../../../services/mail/mail_helper.dart';
 import 'mailbox_settings_dialog.dart';
 
 final log = Logger('MailboxSettingsDetailView');
@@ -20,36 +19,25 @@ class MailboxSettingsDetailView extends StatefulWidget {
 class _MailboxSettingsDetailViewState extends State<MailboxSettingsDetailView> {
   @override
   Widget build(BuildContext context) {
-    //set initial value
     var myControllerEmail = TextEditingController(text: Provider.of<SelectedMailboxWithNotifier>(context, listen: false).selectedMailbox.emailAddress);
-    //watch changes from external source
     myControllerEmail.text = context.watch<SelectedMailboxWithNotifier>().selectedMailbox.emailAddress;
 
-    //set initial value
     var myControllerUsername = TextEditingController(text: Provider.of<SelectedMailboxWithNotifier>(context, listen: false).selectedMailbox.userName);
-    //watch changes from external source
     myControllerUsername.text = context.watch<SelectedMailboxWithNotifier>().selectedMailbox.userName;
 
-    //set initial value
     var myControllerPassword = TextEditingController(text: Provider.of<SelectedMailboxWithNotifier>(context, listen: false).selectedMailbox.password);
-    //watch changes from external source
     myControllerPassword.text = context.watch<SelectedMailboxWithNotifier>().selectedMailbox.password;
 
-    //set initial value
     var myControllerImapUrl = TextEditingController(text: Provider.of<SelectedMailboxWithNotifier>(context, listen: false).selectedMailbox.imapUrl);
-    //watch changes from external source
     myControllerImapUrl.text = context.watch<SelectedMailboxWithNotifier>().selectedMailbox.imapUrl;
 
-    //set initial value
     var myControllerImapPort = TextEditingController(text: Provider.of<SelectedMailboxWithNotifier>(context, listen: false).selectedMailbox.imapPort.toString());
-    //watch changes from external source
     myControllerImapPort.text = context.watch<SelectedMailboxWithNotifier>().selectedMailbox.imapPort.toString();
 
     return SingleChildScrollView(
         controller: ScrollController(),
         child: Container(
             padding: const EdgeInsets.all(paddingWidgetEdges),
-            color: Colors.grey.shade200,
             child: FocusTraversalGroup(
               child: Form(
                   autovalidateMode: AutovalidateMode.always,
@@ -68,6 +56,7 @@ class _MailboxSettingsDetailViewState extends State<MailboxSettingsDetailView> {
                       onSaved: (String? value) {
                         log.info('Value for field saved as "$value"');
                         Provider.of<SelectedMailboxWithNotifier>(context, listen: false).selectedMailbox.emailAddress = value!;
+                        Provider.of<SelectedMailboxWithNotifier>(context, listen: false).valuesUpdated();
                       },
                     ),
                     const SizedBox(height: spacingBetweenItemsVertical),
@@ -82,6 +71,7 @@ class _MailboxSettingsDetailViewState extends State<MailboxSettingsDetailView> {
                       onSaved: (String? value) {
                         log.info('Value for field saved as "$value"');
                         Provider.of<SelectedMailboxWithNotifier>(context, listen: false).selectedMailbox.userName = value!;
+                        Provider.of<SelectedMailboxWithNotifier>(context, listen: false).valuesUpdated();
                       },
                     ),
                     const SizedBox(height: spacingBetweenItemsVertical),
@@ -97,6 +87,7 @@ class _MailboxSettingsDetailViewState extends State<MailboxSettingsDetailView> {
                       onSaved: (String? value) {
                         log.info('Value for field saved as "$value"');
                         Provider.of<SelectedMailboxWithNotifier>(context, listen: false).selectedMailbox.password = value!;
+                        Provider.of<SelectedMailboxWithNotifier>(context, listen: false).valuesUpdated();
                       },
                     ),
                     const SizedBox(height: spacingBetweenItemsVertical),
@@ -111,6 +102,7 @@ class _MailboxSettingsDetailViewState extends State<MailboxSettingsDetailView> {
                       onSaved: (String? value) {
                         log.info('Value for field saved as "$value"');
                         Provider.of<SelectedMailboxWithNotifier>(context, listen: false).selectedMailbox.imapUrl = value!;
+                        Provider.of<SelectedMailboxWithNotifier>(context, listen: false).valuesUpdated();
                       },
                     ),
                     const SizedBox(height: spacingBetweenItemsVertical),
@@ -125,14 +117,17 @@ class _MailboxSettingsDetailViewState extends State<MailboxSettingsDetailView> {
                       onSaved: (String? value) {
                         log.info('Value for field saved as "$value"');
                         Provider.of<SelectedMailboxWithNotifier>(context, listen: false).selectedMailbox.imapPort = int.parse(value!);
+                        Provider.of<SelectedMailboxWithNotifier>(context, listen: false).valuesUpdated();
                       },
                     ),
                     const SizedBox(height: spacingBetweenItemsVertical),
                     Row(children: [
                       Container(
-                        margin: const EdgeInsets.fromLTRB(0, 0, 18, 0), //to match spacing with the above items
-                        child: const Icon(Icons.info),
-                      ),
+                          margin: const EdgeInsets.fromLTRB(0, 0, 18, 0), //to match spacing with the above items
+                          child: Icon(
+                            Icons.security,
+                            color: Colors.grey.shade600, //same color as the others
+                          )),
                       const Text("Use SSL"),
                       Checkbox(
                           value: Provider.of<SelectedMailboxWithNotifier>(context).selectedMailbox.useTls,
@@ -140,10 +135,67 @@ class _MailboxSettingsDetailViewState extends State<MailboxSettingsDetailView> {
                             // This is where we update the state when the checkbox is tapped
                             setState(() {
                               Provider.of<SelectedMailboxWithNotifier>(context, listen: false).selectedMailbox.useTls = value!;
+                              Provider.of<SelectedMailboxWithNotifier>(context, listen: false).valuesUpdated();
                             });
                           })
-                    ])
+                    ]),
+                    const SizedBox(height: spacingBetweenItemsVertical),
+                    const TryMailSettingsWidget()
                   ])),
             )));
+  }
+}
+
+class TryMailSettingsWidget extends StatelessWidget {
+  const TryMailSettingsWidget({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButtonWithMargin(
+        onPressedAction: () {
+          AlertDialog alert = AlertDialog(
+            content: Row(
+              children: [
+                const CircularProgressIndicator(),
+                Container(margin: const EdgeInsets.only(left: 7), child: const Text("Loading...")),
+              ],
+            ),
+          );
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) {
+              return alert;
+            },
+          );
+
+          log.info("Try settings clicked");
+          MailHelper().trySettings(Provider.of<SelectedMailboxWithNotifier>(context, listen: false).selectedMailbox).then((value) {
+            showSnackbar(Colors.green, Colors.white, "Login succesful!", context);
+          }).onError((error, stackTrace) {
+            showSnackbar(Colors.red, Colors.white, "Login failed. Please check your settings!", context);
+          });
+        },
+        buttonText: "Try settigns");
+  }
+
+  showSnackbar(Color backgroundColor, Color textColor, String text, BuildContext context) {
+    Navigator.pop(context);
+    var snackBar = SnackBar(
+      width: 300.0,
+      backgroundColor: backgroundColor,
+      behavior: SnackBarBehavior.floating,
+      content: Text(
+        text,
+        style: TextStyle(
+          color: textColor,
+        ),
+      ),
+      
+    );
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

@@ -13,35 +13,33 @@ class FolderContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        color: Colors.purple.shade600,
-        child: Column(
-          children: [
-            ElevatedButtonWithMargin(
-              buttonText: 'FOLDERSCONTENT',
-              onPressedAction: () {
-                log.info("All Mail");
-              },
-            ),
-            ElevatedButtonWithMargin(
-              buttonText: 'All Mail',
-              onPressedAction: () {
-                log.info("All Mail");
-              },
-            ),
-            ElevatedButtonWithMargin(
-              buttonText: 'All Mail',
-              onPressedAction: () {
-                log.info("All Mail");
-              },
-            ),
-            ElevatedButtonWithMargin(
-              buttonText: 'All Mail',
-              onPressedAction: () {
-                log.info("All Mail");
-              },
-            ),
-          ],
-        ));
+    return Column(
+      children: [
+        ElevatedButtonWithMargin(
+          buttonText: 'FOLDERSCONTENT',
+          onPressedAction: () {
+            log.info("All Mail");
+          },
+        ),
+        ElevatedButtonWithMargin(
+          buttonText: 'All Mail',
+          onPressedAction: () {
+            log.info("All Mail");
+          },
+        ),
+        ElevatedButtonWithMargin(
+          buttonText: 'All Mail',
+          onPressedAction: () {
+            log.info("All Mail");
+          },
+        ),
+        ElevatedButtonWithMargin(
+          buttonText: 'All Mail',
+          onPressedAction: () {
+            log.info("All Mail");
+          },
+        ),
+      ],
+    );
   }
 }

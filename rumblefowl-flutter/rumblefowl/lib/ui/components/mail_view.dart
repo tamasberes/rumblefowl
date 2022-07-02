@@ -13,17 +13,15 @@ class MailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.purple.shade100,
-      child: Column(
-      children: [
-        ElevatedButtonWithMargin(
-          buttonText: 'MAILVIEW',
-          onPressedAction: () {
-            log.info("All Mail");
-          },
-        ),
-      ],
-     ) );
+    return Column(
+    children: [
+      ElevatedButtonWithMargin(
+        buttonText: 'MAILVIEW',
+        onPressedAction: () {
+          log.info("All Mail");
+        },
+      ),
+    ],
+     );
   }
 }

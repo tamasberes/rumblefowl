@@ -20,13 +20,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey[100],
         body: Column(children: [
           const MailActionsHeader(),
           const MailboxesHeader(),
           Expanded(
               child: Row(
-            children: [
+            children: const [
               MailboxFolders(),
               FolderContent(),
               Expanded(child: MailView()),

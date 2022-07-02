@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 part 'mailbox_settings.g.dart';
 
 @HiveType(typeId: 1)
-class MailboxSettings {
+class MailboxSettings extends HiveObject {
   @HiveField(0, defaultValue: "")
   String userName;
   @HiveField(1, defaultValue: "")

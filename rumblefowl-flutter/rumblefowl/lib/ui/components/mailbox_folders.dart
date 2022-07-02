@@ -1,9 +1,6 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
-import 'package:provider/provider.dart';
-import 'package:rumblefowl/services/mail/mail_test.dart';
 
 import 'elevated_button_with_margin.dart';
 
@@ -17,41 +14,39 @@ class MailboxFolders extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        color: Colors.purple.shade300,
-        child: Column(
-          children: [
-            ElevatedButtonWithMargin(
-              buttonText: 'All Mail',
-              onPressedAction: () {
-                log.info("All Mail");
-              },
-            ),
-            ElevatedButtonWithMargin(
-              buttonText: 'All Mail',
-              onPressedAction: () {
-                log.info("All Mail");
-              },
-            ),
-            ElevatedButtonWithMargin(
-              buttonText: 'All Mail',
-              onPressedAction: () {
-                log.info("All Mail");
-              },
-            ),
-            ElevatedButtonWithMargin(
-              buttonText: 'All Mail',
-              onPressedAction: () {
-                log.info("All Mail");
-              },
-            ),
-            ElevatedButtonWithMargin(
-              buttonText: 'All Mail',
-              onPressedAction: () {
-                log.info("All Mail");
-              },
-            ),
-          ],
-        ));
+    return Column(
+      children: [
+        ElevatedButtonWithMargin(
+          buttonText: 'mail folders',
+          onPressedAction: () {
+            log.info("All Mail");
+          },
+        ),
+        ElevatedButtonWithMargin(
+          buttonText: 'here are the folders of a mailbox',
+          onPressedAction: () {
+            log.info("All Mail");
+          },
+        ),
+        ElevatedButtonWithMargin(
+          buttonText: 'All Mail',
+          onPressedAction: () {
+            log.info("All Mail");
+          },
+        ),
+        ElevatedButtonWithMargin(
+          buttonText: 'All Mail',
+          onPressedAction: () {
+            log.info("All Mail");
+          },
+        ),
+        ElevatedButtonWithMargin(
+          buttonText: 'All Mail',
+          onPressedAction: () {
+            log.info("All Mail");
+          },
+        ),
+      ],
+    );
   }
 }

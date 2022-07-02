@@ -3,8 +3,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
-import '../../../services/mail/hive_manager.dart';
-import '../../../services/mail/mailbox_settings.dart';
+import '../../../services/db/hive_manager.dart';
+import '../../../services/db/mailbox_settings.dart';
 import 'mailbox_settings_detailview.dart';
 import 'mailbox_settings_mailbox_listview.dart';
 
@@ -17,6 +17,11 @@ class SelectedMailboxWithNotifier with ChangeNotifier {
 
   set selectedMailbox(MailboxSettings selectedMailbox) {
     _selectedMailbox = selectedMailbox;
+    notifyListeners();
+  }
+
+  valuesUpdated() {
+    selectedMailbox.save().then((value) => log.info("values are now persisted"));
     notifyListeners();
   }
 
@@ -39,23 +44,22 @@ class _MailboxSettingsDialogState extends State<MailboxSettingsDialog> {
         appBar: AppBar(title: const Text("Mailbox settings")),
         body: ChangeNotifierProvider(
           create: (_) => changeNotifierProviderInstance,
-          child: SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Expanded(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Expanded(child: MailboxSettingsMailboxListview()),
-                      Expanded(
-                        child: MailboxSettingsDetailView(),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: const [
+                    Expanded(child: MailboxSettingsMailboxListview()),
+                    VerticalDivider(),
+                    Expanded(
+                      child: MailboxSettingsDetailView(),
+                    ),
+                  ],
+                ),
+              )
+            ],
           ),
         ));
   }
