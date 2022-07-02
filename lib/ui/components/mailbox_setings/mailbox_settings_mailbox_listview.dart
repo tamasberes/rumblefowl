@@ -13,7 +13,9 @@ final log = Logger('MailboxListWidget');
 class MailboxSettingsMailboxListview extends StatefulWidget {
   const MailboxSettingsMailboxListview({Key? key}) : super(key: key);
 
+  //the fix did not work https://stackoverflow.com/questions/72677634/avoid-using-private-types-in-public-apis-warning-in-flutter
   @override
+  // ignore: library_private_types_in_public_api 
   _MailboxSettingsMailboxListviewState createState() => _MailboxSettingsMailboxListviewState();
 }
 
