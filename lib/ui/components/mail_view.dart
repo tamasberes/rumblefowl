@@ -7,7 +7,6 @@ import '../../services/db/hive_manager.dart';
 import '../../services/db/mailbox_settings.dart';
 import '../../services/mail/mail_helper.dart';
 import '../../services/prerferences/preferences_manager.dart';
-import '../util/scrollcontroller.dart';
 
 final log = Logger('MailView');
 
@@ -43,8 +42,8 @@ class _MailViewState extends State<MailView> {
                 return Column(children: [
                   Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Text("From:"),
                       ),
                       
@@ -55,20 +54,20 @@ class _MailViewState extends State<MailView> {
                   ),
                   Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Text("To:"),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(snapshot.data!.to.toString()!),
+                        child: Text(snapshot.data!.to.toString()),
                       )
                     ],
                   ),
                   Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Text("Subject:"),
                       ),
                       Padding(
@@ -77,16 +76,28 @@ class _MailViewState extends State<MailView> {
                       )
                     ],
                   ),
+                  Row(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text("Date:"),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(snapshot.data!.decodeDate()!.toString()),
+                      )
+                    ],
+                  ),
 
                   Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Text("Body:"),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(snapshot.data!.renderMessage()!),
+                        child: Text(snapshot.data!.decodeTextHtmlPart().toString()),
                       )
                     ],
                   )
