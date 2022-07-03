@@ -172,7 +172,7 @@ class TryMailSettingsWidget extends StatelessWidget {
           );
 
           log.info("Try settings clicked");
-          MailHelper().trySettings(Provider.of<SelectedMailboxWithNotifier>(context, listen: false).selectedMailbox).then((value) {
+          MailHelper().login(Provider.of<SelectedMailboxWithNotifier>(context, listen: false).selectedMailbox).then((value) {
             showSnackbar(Colors.green, Colors.white, "Login succesful!", context);
           }).onError((error, stackTrace) {
             showSnackbar(Colors.red, Colors.white, "Login failed. Please check your settings!", context);
@@ -193,7 +193,6 @@ class TryMailSettingsWidget extends StatelessWidget {
           color: textColor,
         ),
       ),
-      
     );
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(snackBar);

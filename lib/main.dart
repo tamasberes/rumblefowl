@@ -3,6 +3,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rumblefowl/services/db/hive_manager.dart';
+import 'package:rumblefowl/services/prerferences/preferences_manager.dart';
 import 'package:rumblefowl/ui/screens/home_screen.dart';
 import 'package:logging/logging.dart';
 
@@ -16,6 +17,7 @@ const paddingWidgetEdges = 18.0;
 Future<void> main() async {
   setupLogging();
   await HiveManager().init();
+  await PreferencesManager().init();
   runApp(const MyApp());
 }
 

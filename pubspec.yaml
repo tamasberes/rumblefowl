@@ -43,6 +43,7 @@ dependencies:
   listenable: ^0.3.0
   hive_flutter: ^1.1.0
   uuid: ^3.0.6
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:

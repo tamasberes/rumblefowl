@@ -23,14 +23,13 @@ class MailboxSettingsAdapter extends TypeAdapter<MailboxSettings> {
       fields[3] == null ? 0 : fields[3] as int,
       fields[4] == null ? true : fields[4] as bool,
       fields[5] == null ? 'email@example.com' : fields[5] as String,
-      fields[6] == null ? false : fields[6] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, MailboxSettings obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.userName)
       ..writeByte(1)
@@ -42,9 +41,7 @@ class MailboxSettingsAdapter extends TypeAdapter<MailboxSettings> {
       ..writeByte(4)
       ..write(obj.useTls)
       ..writeByte(5)
-      ..write(obj.emailAddress)
-      ..writeByte(6)
-      ..write(obj.isSelectedOnUi);
+      ..write(obj.emailAddress);
   }
 
   @override

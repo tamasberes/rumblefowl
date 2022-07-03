@@ -19,7 +19,7 @@ class HiveManager {
     var allMailboxes = await Hive.openBox<MailboxSettings>(mailboxesSettingsBoxName);
     if (allMailboxes.isEmpty) {
       //add default one if it's empty
-      allMailboxes.add(MailboxSettings("userName", "password", "imap url", 993, true, "mail@example.com", true));
+      allMailboxes.add(MailboxSettings("userName", "password", "imap url", 993, true, "mail@example.com"));
     }
     initDone = true;
   }

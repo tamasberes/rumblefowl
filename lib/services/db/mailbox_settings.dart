@@ -17,8 +17,5 @@ class MailboxSettings extends HiveObject {
   @HiveField(5, defaultValue: "email@example.com")
   String emailAddress;
 
-  @HiveField(6, defaultValue: false)
-  bool isSelectedOnUi;
-
-  MailboxSettings(this.userName, this.password, this.imapUrl, this.imapPort, this.useTls, this.emailAddress, this.isSelectedOnUi);
+  MailboxSettings(this.userName, this.password, this.imapUrl, this.imapPort, this.useTls, this.emailAddress);
 }
