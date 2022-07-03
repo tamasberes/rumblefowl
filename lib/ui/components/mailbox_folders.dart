@@ -63,6 +63,7 @@ class _MailboxFoldersState extends State<MailboxFolders> {
 
                                 setState(() {
                                   selectedIndex = index;
+                                  PreferencesManager().setSelectedFolder(currentItem.name);
                                 });
                               });
                         }));

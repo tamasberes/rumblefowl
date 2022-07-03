@@ -1,6 +1,5 @@
 //lists folders inside of a mailbox
 import 'package:enough_mail/enough_mail.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:logging/logging.dart';
@@ -10,7 +9,6 @@ import '../../services/db/mailbox_settings.dart';
 import '../../services/mail/mail_helper.dart';
 import '../../services/prerferences/preferences_manager.dart';
 import '../util/scrollcontroller.dart';
-import 'elevated_button_with_margin.dart';
 
 final log = Logger('FolderContent');
 
@@ -55,8 +53,8 @@ class _EmailListState extends State<EmailList> {
                         itemBuilder: (context, index) {
                           var currentItem = snapshot.data?[index];
                           return ListTile(
-                              isThreeLine: true,
-                              title: Text(currentItem!.decodeSubject()!),
+                              isThreeLine: true,textColor: currentItem!.isSeen ? Colors.grey : Colors.white,
+                              title: Text(currentItem.decodeSubject()!),
                               subtitle: Text("${currentItem.fromEmail!}\n${currentItem.decodeDate()}"),
                               selected: selectedIndex == index,
                               onTap: () {

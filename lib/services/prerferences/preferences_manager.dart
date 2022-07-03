@@ -1,6 +1,4 @@
-import 'dart:convert';
 
-import 'package:enough_mail/codecs.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
