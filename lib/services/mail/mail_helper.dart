@@ -44,7 +44,12 @@ class MailHelper {
 
   Future<List<MimeMessage>> getFolderContent(MailboxSettings mailboxSettings, String folder) async {
     var mailbox = await getFoldersForMailbox(mailboxSettings);
-    await loggedInMailboxes[mailboxSettings.emailAddress]!.fetchMessages(mailbox: mailbox.firstWhere((element) => element.name==folder));
-    return await loggedInMailboxes[mailboxSettings.emailAddress]!.fetchMessages(count: 20);
+    return await loggedInMailboxes[mailboxSettings.emailAddress]!.fetchMessages(mailbox: mailbox.firstWhere((element) => element.name == folder));
+  }
+
+  Future<MimeMessage> getMail(MailboxSettings mailboxSettings, String folder, int guid) async {
+    var mailbox = await getFoldersForMailbox(mailboxSettings);
+    var messagesInSelectedFolder = await loggedInMailboxes[mailboxSettings.emailAddress]!.fetchMessages(mailbox: mailbox.firstWhere((element) => element.name == folder));
+    return messagesInSelectedFolder.firstWhere((element) => element.guid == guid);
   }
 }

@@ -22,6 +22,7 @@ class PreferencesManager with ChangeNotifier {
 
   static const String keySelectedMailbox = "keySelectedMailbox";
   static const String keySelectedfolder = "keySelectedfolder";
+  static const String keySelectedMailGuid = "keySelectedMailGuid";
 
   int getSelectedMailbox() {
     return (prefs.getInt(keySelectedMailbox) ?? 0);
@@ -40,6 +41,17 @@ class PreferencesManager with ChangeNotifier {
   setSelectedFolder(String folderName) {
     log.info("keySelectedfolder: $folderName");
     prefs.setString(keySelectedfolder, folderName);
+    notifyListeners();
+  }
+
+
+  int getSelectedMailGuid() {
+    return (prefs.getInt(keySelectedMailGuid) ?? -1);
+  }
+
+  void setSelectedMailGuid(int guid) {
+    log.info("setSelectedMailGuid: $guid");
+    prefs.setInt(keySelectedMailGuid, guid);
     notifyListeners();
   }
 

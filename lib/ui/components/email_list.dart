@@ -1,4 +1,3 @@
-//lists folders inside of a mailbox
 import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -53,7 +52,8 @@ class _EmailListState extends State<EmailList> {
                         itemBuilder: (context, index) {
                           var currentItem = snapshot.data?[index];
                           return ListTile(
-                              isThreeLine: true,textColor: currentItem!.isSeen ? Colors.grey : Colors.white,
+                              isThreeLine: true,
+                              textColor: currentItem!.isSeen ? Colors.grey : Colors.white,
                               title: Text(currentItem.decodeSubject()!),
                               subtitle: Text("${currentItem.fromEmail!}\n${currentItem.decodeDate()}"),
                               selected: selectedIndex == index,
@@ -61,6 +61,7 @@ class _EmailListState extends State<EmailList> {
                                 setState(() {
                                   selectedIndex = index;
                                 });
+                                PreferencesManager().setSelectedMailGuid(currentItem.guid!);
                               });
                         }));
               }),
