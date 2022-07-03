@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:enough_mail/codecs.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +23,7 @@ class PreferencesManager with ChangeNotifier {
   }
 
   static const String keySelectedMailbox = "keySelectedMailbox";
+  static const String keySelectedfolder = "keySelectedfolder";
 
   int getSelectedMailbox() {
     return (prefs.getInt(keySelectedMailbox) ?? 0);
@@ -30,4 +34,15 @@ class PreferencesManager with ChangeNotifier {
     prefs.setInt(keySelectedMailbox, index);
     notifyListeners();
   }
+
+  String getSelectedFolder() {
+    return (prefs.getString(keySelectedfolder) ?? "inbox");
+  }
+
+  setSelectedFolder(String folderName) {
+    log.info("keySelectedfolder: $folderName");
+    prefs.setString(keySelectedfolder, folderName);
+    notifyListeners();
+  }
+
 }

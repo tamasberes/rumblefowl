@@ -7,6 +7,7 @@ import 'package:rumblefowl/ui/components/elevated_button_with_margin.dart';
 import '../../services/db/hive_manager.dart';
 import '../../services/db/mailbox_settings.dart';
 import '../../services/prerferences/preferences_manager.dart';
+import '../util/scrollcontroller.dart';
 
 final log = Logger('MailboxesHeader');
 
@@ -40,6 +41,7 @@ class _MailboxesHeaderState extends State<MailboxesHeader> {
                 maxHeight: 48.0,
               ),
               child: ListView.builder(
+                  controller: AdjustableScrollController(),
                   scrollDirection: Axis.horizontal,
                   itemCount: box.values.length,
                   itemBuilder: (context, index) {
@@ -54,7 +56,6 @@ class _MailboxesHeaderState extends State<MailboxesHeader> {
                             selectedIndex = index;
                           });
                           PreferencesManager().setSelectedMailbox(index);
-
                         });
                   }));
         });

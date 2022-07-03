@@ -1,30 +1,29 @@
+//lists folders inside of a mailbox
 import 'package:enough_mail/enough_mail.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
-import 'package:rumblefowl/services/mail/mail_helper.dart';
-import 'package:rumblefowl/services/prerferences/preferences_manager.dart';
-
 import '../../services/db/hive_manager.dart';
 import '../../services/db/mailbox_settings.dart';
+import '../../services/mail/mail_helper.dart';
+import '../../services/prerferences/preferences_manager.dart';
 import '../util/scrollcontroller.dart';
 import 'elevated_button_with_margin.dart';
 
-final log = Logger('MailboxFolders');
+final log = Logger('FolderContent');
 
-//shows the available mailbox folders for a selected mailbox (or all)
-class MailboxFolders extends StatefulWidget {
-  const MailboxFolders({
+class EmailList extends StatefulWidget {
+  const EmailList({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<MailboxFolders> createState() => _MailboxFoldersState();
+  State<EmailList> createState() => _EmailListState();
 }
 
-class _MailboxFoldersState extends State<MailboxFolders> {
+class _EmailListState extends State<EmailList> {
   int selectedIndex = 0;
 
   @override
@@ -34,8 +33,8 @@ class _MailboxFoldersState extends State<MailboxFolders> {
     return ChangeNotifierProvider(
         create: (_) => changeNotifierProviderInstance,
         child: Consumer<PreferencesManager>(
-          builder: (context, value, child) => FutureBuilder<List<Mailbox>>(
-              future: MailHelper().getFoldersForMailbox(Hive.box<MailboxSettings>(mailboxesSettingsBoxName).getAt(changeNotifierProviderInstance.getSelectedMailbox())!),
+          builder: (context, value, child) => FutureBuilder<List<MimeMessage>>(
+              future: MailHelper().getFolderContent(Hive.box<MailboxSettings>(mailboxesSettingsBoxName).getAt(changeNotifierProviderInstance.getSelectedMailbox())!, PreferencesManager().getSelectedFolder()),
               builder: (context, snapshot) {
                 if (snapshot.hasError) return Text('Error ${snapshot.error}');
                 if (snapshot.connectionState != ConnectionState.done) {
@@ -55,12 +54,12 @@ class _MailboxFoldersState extends State<MailboxFolders> {
                         itemCount: snapshot.data?.length,
                         itemBuilder: (context, index) {
                           var currentItem = snapshot.data?[index];
-                          return ElevatedButtonWithMargin(
-                              isHighlighted: selectedIndex == index,
-                              buttonText: currentItem!.path,
-                              onPressedAction: () {
-                                log.info("mailbox clicked${currentItem.path}");
-
+                          return ListTile(
+                              isThreeLine: true,
+                              title: Text(currentItem!.decodeSubject()!),
+                              subtitle: Text("${currentItem.fromEmail!}\n${currentItem.decodeDate()}"),
+                              selected: selectedIndex == index,
+                              onTap: () {
                                 setState(() {
                                   selectedIndex = index;
                                 });
