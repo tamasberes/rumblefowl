@@ -1,8 +1,10 @@
 import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
+import '../../main.dart';
 import '../../services/db/hive_manager.dart';
 import '../../services/db/mailbox_settings.dart';
 import '../../services/mail/mail_helper.dart';
@@ -10,6 +12,7 @@ import '../../services/prerferences/preferences_manager.dart';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
+import 'package:intl/date_symbol_data_local.dart';
 
 final log = Logger('MailView');
 
@@ -45,7 +48,8 @@ class _MailViewState extends State<MailView> {
     try {
       await _controller.initialize();
       await _controller.setBackgroundColor(Colors.white);
-      await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
+      await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.allow);
+
       //await _controller.loadUrl('https://flutter.dev');
 
       if (!mounted) return;
@@ -99,6 +103,9 @@ class _MailViewState extends State<MailView> {
   Widget build(BuildContext context) {
     PreferencesManager changeNotifierProviderInstance = PreferencesManager();
 
+    Intl.defaultLocale = 'de';
+    initializeDateFormatting('de_DE', null);
+
     return ChangeNotifierProvider(
         create: (_) => changeNotifierProviderInstance,
         child: Consumer<PreferencesManager>(
@@ -114,58 +121,50 @@ class _MailViewState extends State<MailView> {
                   }
                   _controller.loadStringContent(snapshot.data!.decodeTextHtmlPart()!);
                   return Column(children: [
-                    Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text("From:"),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(snapshot.data!.fromEmail!),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text("To:"),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: drawToMails(snapshot),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text("Subject:"),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(snapshot.data!.decodeSubject()!),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text("Date:"),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(snapshot.data!.decodeDate()!.toString()),
-                        )
-                      ],
-                    ),
+                    Row(children: [createLeadingLabel("From"), createMailChip(snapshot.data!.from)]),
+                    const SizedBox(height: spacingBetweenItemsVerticalSmall),
+                    Row(children: [createLeadingLabel("To"), createMailChip(snapshot.data!.to)]),
+                    const SizedBox(height: spacingBetweenItemsVerticalSmall),
+                    Row(children: [createLeadingLabel("Subject"), createLeadingLabel(snapshot.data!.decodeSubject()!)]),
+                    const SizedBox(height: spacingBetweenItemsVerticalSmall),
+                    Row(children: [createLeadingLabel("Date"), createLeadingLabel(DateFormat.yMMMMEEEEd().add_jms().format(snapshot.data!.decodeDate()!))]),
+                    const SizedBox(height: spacingBetweenItemsVerticalSmall),
                     compositeView()
                   ]);
                 })));
   }
+
+  Widget createLeadingLabel(String labelText) {
+    return Padding(padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0), child: Text(labelText));
+  }
+
+  Widget createMailChip(List<MailAddress>? emails) {
+    if (emails == null) {
+      return const Text("error");
+    }
+    return Wrap(
+      runSpacing: 8.0,
+      spacing: 8.0,
+      children: emails
+          .map((actionChip) => ActionChip(
+              avatar: const Icon(Icons.email),
+              label: Text(actionChip.email),
+              onPressed: () {
+                composeNewMailTo(actionChip.email);
+              }))
+          .toList(),
+    );
+  }
+
+/* Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ActionChip(
+                            avatar: const Icon(Icons.email),
+                            label: Text(snapshot.data!.fromEmail!),
+                            onPressed: () {
+                              composeNewMailTo(snapshot.data!.fromEmail!);
+                            }));
+  }*/
 
   Text drawToMails(AsyncSnapshot<MimeMessage> snapshot) {
     return Text(formatToMails(snapshot.data!.to)); //TODO this should be a listview
@@ -206,5 +205,10 @@ class _MailViewState extends State<MailView> {
     );
 
     return decision ?? WebviewPermissionDecision.none;
+  }
+
+  void composeNewMailTo(String to) {
+    //TODO compose new mail
+    log.info("composeNewMailTo: $to");
   }
 }
