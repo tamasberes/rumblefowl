@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logging/logging.dart';
-import 'package:rumblefowl/ui/components/elevated_button_with_margin.dart';
+import 'package:rumblefowl/ui/components/widgets/elevated_button_with_margin.dart';
 
-import '../../services/db/hive_manager.dart';
-import '../../services/db/mailbox_settings.dart';
-import '../../services/prerferences/preferences_manager.dart';
-import '../util/scrollcontroller.dart';
+import '../../../services/db/hive_manager.dart';
+import '../../../services/db/mailbox_settings.dart';
+import '../../../services/prerferences/preferences_manager.dart';
+import '../../util/scrollcontroller.dart';
 
 final log = Logger('MailboxesHeader');
 

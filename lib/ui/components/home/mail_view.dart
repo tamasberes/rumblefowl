@@ -4,15 +4,17 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
-import '../../main.dart';
-import '../../services/db/hive_manager.dart';
-import '../../services/db/mailbox_settings.dart';
-import '../../services/mail/mail_helper.dart';
-import '../../services/prerferences/preferences_manager.dart';
+import '../../../main.dart';
+import '../../../services/db/hive_manager.dart';
+import '../../../services/db/mailbox_settings.dart';
+import '../../../services/mail/mail_helper.dart';
+import '../../../services/prerferences/preferences_manager.dart';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:intl/date_symbol_data_local.dart';
+
+import '../widgets/outlined_button_with_margin.dart';
 
 final log = Logger('MailView');
 
@@ -70,7 +72,7 @@ class _MailViewState extends State<MailView> {
                   ),
                   actions: [
                     TextButton(
-                      child: const Text('Continue'),
+                      child: const Text('Continue'), //TODO should be retry
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -138,19 +140,43 @@ class _MailViewState extends State<MailView> {
                   }
                   _controller.loadStringContent(snapshot.data!.decodeTextHtmlPart()!);
 
-                  final leadingStyle = Theme.of(context).textTheme.labelLarge!;
-                  final valueStyle = Theme.of(context).textTheme.titleMedium!;
-
-                  return Column(children: [
-                    Row(children: [createLeadingLabel("From:", leadingStyle), createMailChip(snapshot.data!.from)]),
-                    const SizedBox(height: spacingBetweenItemsVerticalSmall),
-                    Row(children: [createLeadingLabel("To:", leadingStyle), createMailChip(snapshot.data!.to)]),
-                    Row(children: [createLeadingLabel("Subject:", leadingStyle), Container(padding: const EdgeInsets.all(8.0), child: createLeadingLabel(snapshot.data!.decodeSubject()!, leadingStyle))]),
-                    Row(children: [createLeadingLabel("Date:", leadingStyle), createLeadingLabel(DateFormat.yMMMMEEEEd().add_jms().format(snapshot.data!.decodeDate()!), valueStyle)]),
-                    const SizedBox(height: spacingBetweenItemsVerticalSmall),
-                    compositeView()
-                  ]);
+                  return Column(children: [getMenuBarContent(snapshot), compositeView()]);
                 })));
+  }
+
+  Widget getMenuBarContent(AsyncSnapshot<MimeMessage> snapshot) {
+    final leadingStyle = Theme.of(context).textTheme.labelLarge!;
+    final valueStyle = Theme.of(context).textTheme.titleMedium!;
+    return Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [createLeadingLabel("From:", leadingStyle), createMailChip(snapshot.data!.from)]),
+          const SizedBox(height: spacingBetweenItemsVerticalSmall),
+          Row(children: [createLeadingLabel("To:", leadingStyle), createMailChip(snapshot.data!.to)]),
+          Row(children: [createLeadingLabel("Subject:", leadingStyle), Container(padding: const EdgeInsets.all(8.0), child: createLeadingLabel(snapshot.data!.decodeSubject()!, valueStyle))]),
+          Row(children: [createLeadingLabel("Date:", leadingStyle), createLeadingLabel(DateFormat.yMMMMEEEEd().add_jms().format(snapshot.data!.decodeDate()!), valueStyle)]),
+          const SizedBox(height: spacingBetweenItemsVerticalSmall),
+        ],
+      ),
+      Expanded(
+        child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            OutlinedButtonWithMargin(onPressedAction: () {}, buttonText: "Reply"),
+            OutlinedButtonWithMargin(onPressedAction: () {}, buttonText: "Reply all"),
+            OutlinedButtonWithMargin(onPressedAction: () {}, buttonText: "Delete mail"),
+            OutlinedButtonWithMargin(onPressedAction: () {}, buttonText: "Mark as read"),
+          ]),
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            OutlinedButtonWithMargin(onPressedAction: () {}, buttonText: "Print"),
+            OutlinedButtonWithMargin(onPressedAction: () {}, buttonText: "Forward"),
+            OutlinedButtonWithMargin(onPressedAction: () {}, buttonText: "Plain text view"),
+          ]),
+        ],
+      ))
+    ]);
   }
 
   Widget createLeadingLabel(String labelText, TextStyle style) {

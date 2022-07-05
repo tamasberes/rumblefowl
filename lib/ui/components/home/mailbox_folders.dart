@@ -7,10 +7,10 @@ import 'package:provider/provider.dart';
 import 'package:rumblefowl/services/mail/mail_helper.dart';
 import 'package:rumblefowl/services/prerferences/preferences_manager.dart';
 
-import '../../services/db/hive_manager.dart';
-import '../../services/db/mailbox_settings.dart';
-import '../util/scrollcontroller.dart';
-import 'elevated_button_with_margin.dart';
+import '../../../services/db/hive_manager.dart';
+import '../../../services/db/mailbox_settings.dart';
+import '../../util/scrollcontroller.dart';
+import '../widgets/elevated_button_with_margin.dart';
 
 final log = Logger('MailboxFolders');
 

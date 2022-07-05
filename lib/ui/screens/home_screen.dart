@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
-import 'package:rumblefowl/ui/components/mailbox_folders.dart';
+import 'package:rumblefowl/ui/components/home/mailbox_folders.dart';
 
-import '../components/email_list.dart';
-import '../components/mail_actions_header.dart';
-import '../components/mail_view.dart';
-import '../components/mailbox_headers.dart';
+import '../components/home/email_list.dart';
+import '../components/home/mail_actions_header.dart';
+import '../components/home/mail_view.dart';
+import '../components/home/mailbox_headers.dart';
 
 final log = Logger('HomeWidget');
 

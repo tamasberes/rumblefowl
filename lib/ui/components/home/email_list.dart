@@ -4,11 +4,11 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
-import '../../services/db/hive_manager.dart';
-import '../../services/db/mailbox_settings.dart';
-import '../../services/mail/mail_helper.dart';
-import '../../services/prerferences/preferences_manager.dart';
-import '../util/scrollcontroller.dart';
+import '../../../services/db/hive_manager.dart';
+import '../../../services/db/mailbox_settings.dart';
+import '../../../services/mail/mail_helper.dart';
+import '../../../services/prerferences/preferences_manager.dart';
+import '../../util/scrollcontroller.dart';
 
 final log = Logger('FolderContent');
 
@@ -32,7 +32,7 @@ class _EmailListState extends State<EmailList> {
         create: (_) => changeNotifierProviderInstance,
         child: Consumer<PreferencesManager>(
           builder: (context, value, child) => FutureBuilder<List<MimeMessage>>(
-              future: MailHelper().getFolderContent(Hive.box<MailboxSettings>(mailboxesSettingsBoxName).getAt(changeNotifierProviderInstance.getSelectedMailbox())!, PreferencesManager().getSelectedFolder()),
+              future: MailHelper().getFolderContent(Hive.box<MailboxSettings>(mailboxesSettingsBoxName).getAt(changeNotifierProviderInstance.getSelectedMailbox())!, changeNotifierProviderInstance.getSelectedFolder()),
               builder: (context, snapshot) {
                 if (snapshot.hasError) return Text('Error ${snapshot.error}');
                 if (snapshot.connectionState != ConnectionState.done) {

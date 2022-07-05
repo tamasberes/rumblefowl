@@ -1,0 +1,1 @@
+typedef OnPressedAction = void Function();

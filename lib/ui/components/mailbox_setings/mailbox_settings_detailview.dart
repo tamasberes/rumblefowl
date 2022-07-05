@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:rumblefowl/main.dart';
-import 'package:rumblefowl/ui/components/elevated_button_with_margin.dart';
+import 'package:rumblefowl/ui/components/widgets/elevated_button_with_margin.dart';
 
 import '../../../services/mail/mail_helper.dart';
 import 'mailbox_settings_dialog.dart';

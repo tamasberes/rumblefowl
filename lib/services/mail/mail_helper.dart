@@ -1,7 +1,6 @@
 import 'dart:collection';
 
 import 'package:enough_mail/enough_mail.dart';
-import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import '../db/mailbox_settings.dart';
 
@@ -23,7 +22,7 @@ class MailHelper {
     }
     log.info('connecting to ${config.displayName}.');
     final account = MailAccount.fromDiscoveredSettings('my account', mailbox.emailAddress, mailbox.password, config);
-    final mailClient = MailClient(account, isLogEnabled: kDebugMode);
+    final mailClient = MailClient(account, isLogEnabled: false);
     try {
       await mailClient.connect();
       log.info('connected');

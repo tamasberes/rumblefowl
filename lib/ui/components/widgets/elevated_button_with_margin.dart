@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rumblefowl/ui/components/widgets/utils.dart';
 
 ///Button with margins
 class ElevatedButtonWithMargin extends StatelessWidget {
@@ -26,4 +27,3 @@ class ElevatedButtonWithMargin extends StatelessWidget {
   }
 }
 
-typedef OnPressedAction = void Function();
