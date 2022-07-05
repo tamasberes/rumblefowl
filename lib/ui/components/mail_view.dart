@@ -94,14 +94,15 @@ class _MailViewState extends State<MailView> {
       return Expanded(
           child: Column(
         children: [
-          const Divider(
-            height: 2.0,thickness: 2.0,
-            color: Colors.amber,
+          Divider(
+            height: 2.0,
+            thickness: 2.0,
+            color: Theme.of(context).colorScheme.secondary,
           ),
           Expanded(
             child: Row(
               children: [
-                const VerticalDivider(thickness:2.0, width: 2.0, color: Colors.amber),
+                VerticalDivider(thickness: 2.0, width: 2.0, color: Theme.of(context).colorScheme.secondary),
                 Expanded(
                     child: Webview(
                   _controller,
