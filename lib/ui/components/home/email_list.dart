@@ -53,7 +53,7 @@ class _EmailListState extends State<EmailList> {
                         itemCount: snapshot.data?.length,
                         itemBuilder: (context, index) {
                           var currentItem = snapshot.data?[index];
-                          return ListTile(
+                          return ListTile(selectedTileColor:  Theme.of(context).colorScheme.secondary,
                               isThreeLine: true,
                               title: Text(currentItem!.decodeSubject()!, overflow: TextOverflow.ellipsis, maxLines: 1, style: currentItem.isSeen ? const TextStyle(fontWeight: FontWeight.normal) : const TextStyle(fontWeight: FontWeight.bold)),
                               subtitle: Text(
