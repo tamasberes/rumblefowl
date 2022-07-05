@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,6 +22,7 @@ class PreferencesManager with ChangeNotifier {
   static const String keySelectedMailbox = "keySelectedMailbox";
   static const String keySelectedfolder = "keySelectedfolder";
   static const String keySelectedMailGuid = "keySelectedMailGuid";
+  static const String keyIsDarkMode = "keyIsDarkMode";
 
   int getSelectedMailbox() {
     return (prefs.getInt(keySelectedMailbox) ?? 0);
@@ -44,7 +44,6 @@ class PreferencesManager with ChangeNotifier {
     notifyListeners();
   }
 
-
   int getSelectedMailGuid() {
     return (prefs.getInt(keySelectedMailGuid) ?? -1);
   }
@@ -55,4 +54,17 @@ class PreferencesManager with ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleDarkMode() {
+    setIsDarkMode(!getIsDarkMode());
+    log.info("current mode:${getIsDarkMode()}");
+  }
+
+  bool getIsDarkMode() {
+    return (prefs.getBool(keyIsDarkMode) ?? true);
+  }
+
+  setIsDarkMode(bool isDarkMode) {
+    prefs.setBool(keyIsDarkMode, isDarkMode);
+     notifyListeners();
+ }
 }

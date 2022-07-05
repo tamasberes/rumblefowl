@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import 'package:rumblefowl/services/prerferences/preferences_manager.dart';
 import 'package:rumblefowl/ui/components/mailbox_setings/mailbox_settings_dialog.dart';
 import '../widgets/elevated_button_with_margin.dart';
 
@@ -46,7 +47,13 @@ class MailActionsHeader extends StatelessWidget {
           onPressedAction: () {
             log.info("Search clicked");
           },
-        )
+        ),
+        Spacer(flex: 1),
+        IconButton(
+            onPressed: () {
+              PreferencesManager().toggleDarkMode();
+            },
+            icon: Icon(Icons.brightness_1))
       ],
     );
   }

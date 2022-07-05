@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -54,9 +56,12 @@ class _EmailListState extends State<EmailList> {
                           var currentItem = snapshot.data?[index];
                           return ListTile(
                               isThreeLine: true,
-                              textColor: currentItem!.isSeen ? Colors.grey : Colors.white,
-                              title: Text(currentItem.decodeSubject()!),
-                              subtitle: Text("${currentItem.fromEmail!}\n${DateFormat.yMMMMd().add_Hms().format(currentItem.decodeDate()!)}"),
+                              //textColor: currentItem!.isSeen ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.onBackground,
+                              title: Text(currentItem!.decodeSubject()!, overflow: TextOverflow.ellipsis, maxLines: 1, style: currentItem.isSeen ? const TextStyle(fontWeight: FontWeight.normal) : const TextStyle(fontWeight: FontWeight.bold)),
+                              subtitle: Text(
+                                "${currentItem.fromEmail!}\n${DateFormat.yMMMMd().add_Hms().format(currentItem.decodeDate()!)}",
+                                style: currentItem.isSeen ? const TextStyle(fontWeight: FontWeight.normal) : const TextStyle(fontWeight: FontWeight.bold),
+                              ),
                               selected: selectedIndex == index,
                               onTap: () {
                                 setState(() {
