@@ -92,9 +92,25 @@ class _MailViewState extends State<MailView> {
       );
     } else {
       return Expanded(
-          child: Webview(
-        _controller,
-        permissionRequested: _onPermissionRequested,
+          child: Column(
+        children: [
+          const Divider(
+            height: 2.0,thickness: 2.0,
+            color: Colors.amber,
+          ),
+          Expanded(
+            child: Row(
+              children: [
+                const VerticalDivider(thickness:2.0, width: 2.0, color: Colors.amber),
+                Expanded(
+                    child: Webview(
+                  _controller,
+                  permissionRequested: _onPermissionRequested,
+                )),
+              ],
+            ),
+          ),
+        ],
       ));
     }
   }
@@ -120,22 +136,24 @@ class _MailViewState extends State<MailView> {
                     );
                   }
                   _controller.loadStringContent(snapshot.data!.decodeTextHtmlPart()!);
+
+                  final leadingStyle = Theme.of(context).textTheme.labelLarge!;
+                  final valueStyle = Theme.of(context).textTheme.titleMedium!;
+
                   return Column(children: [
-                    Row(children: [createLeadingLabel("From"), createMailChip(snapshot.data!.from)]),
+                    Row(children: [createLeadingLabel("From:", leadingStyle), createMailChip(snapshot.data!.from)]),
                     const SizedBox(height: spacingBetweenItemsVerticalSmall),
-                    Row(children: [createLeadingLabel("To"), createMailChip(snapshot.data!.to)]),
-                    const SizedBox(height: spacingBetweenItemsVerticalSmall),
-                    Row(children: [createLeadingLabel("Subject"), createLeadingLabel(snapshot.data!.decodeSubject()!)]),
-                    const SizedBox(height: spacingBetweenItemsVerticalSmall),
-                    Row(children: [createLeadingLabel("Date"), createLeadingLabel(DateFormat.yMMMMEEEEd().add_jms().format(snapshot.data!.decodeDate()!))]),
+                    Row(children: [createLeadingLabel("To:", leadingStyle), createMailChip(snapshot.data!.to)]),
+                    Row(children: [createLeadingLabel("Subject:", leadingStyle), Container(padding: const EdgeInsets.all(8.0), child: createLeadingLabel(snapshot.data!.decodeSubject()!, leadingStyle))]),
+                    Row(children: [createLeadingLabel("Date:", leadingStyle), createLeadingLabel(DateFormat.yMMMMEEEEd().add_jms().format(snapshot.data!.decodeDate()!), valueStyle)]),
                     const SizedBox(height: spacingBetweenItemsVerticalSmall),
                     compositeView()
                   ]);
                 })));
   }
 
-  Widget createLeadingLabel(String labelText) {
-    return Padding(padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0), child: Text(labelText));
+  Widget createLeadingLabel(String labelText, TextStyle style) {
+    return Padding(padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0), child: Text(labelText, style: style));
   }
 
   Widget createMailChip(List<MailAddress>? emails) {
@@ -147,7 +165,6 @@ class _MailViewState extends State<MailView> {
       spacing: 8.0,
       children: emails
           .map((actionChip) => ActionChip(
-              avatar: const Icon(Icons.email),
               label: Text(actionChip.email),
               onPressed: () {
                 composeNewMailTo(actionChip.email);
@@ -155,16 +172,6 @@ class _MailViewState extends State<MailView> {
           .toList(),
     );
   }
-
-/* Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ActionChip(
-                            avatar: const Icon(Icons.email),
-                            label: Text(snapshot.data!.fromEmail!),
-                            onPressed: () {
-                              composeNewMailTo(snapshot.data!.fromEmail!);
-                            }));
-  }*/
 
   Text drawToMails(AsyncSnapshot<MimeMessage> snapshot) {
     return Text(formatToMails(snapshot.data!.to)); //TODO this should be a listview
