@@ -1,6 +1,7 @@
 import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import '../../services/db/hive_manager.dart';
@@ -55,7 +56,7 @@ class _EmailListState extends State<EmailList> {
                               isThreeLine: true,
                               textColor: currentItem!.isSeen ? Colors.grey : Colors.white,
                               title: Text(currentItem.decodeSubject()!),
-                              subtitle: Text("${currentItem.fromEmail!}\n${currentItem.decodeDate()}"),
+                              subtitle: Text("${currentItem.fromEmail!}\n${DateFormat.yMMMMd().add_Hms().format(currentItem.decodeDate()!)}"),
                               selected: selectedIndex == index,
                               onTap: () {
                                 setState(() {
