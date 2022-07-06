@@ -26,7 +26,7 @@ class _MailboxesHeaderState extends State<MailboxesHeader> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey.shade700,
+      color: Colors.grey.shade900,
       child: ValueListenableBuilder(
           valueListenable: Hive.box<MailboxSettings>(mailboxesSettingsBoxName).listenable(),
           builder: (context, Box<MailboxSettings> box, _) {

@@ -70,10 +70,12 @@ class MyApp extends StatelessWidget {
                 home: Scaffold(
                   body: Column(
                     children: [
-                      WindowTitleBarBox(
-                          child: Row(
-                        children: [Expanded(child: MoveWindow()), const WindowButtons()],
-                      )),
+                      Container(color: Colors.amber.shade400,
+                        child: WindowTitleBarBox(
+                            child: Row(
+                          children: [Expanded(child: MoveWindow()), const WindowButtons()],
+                        )),
+                      ),
                       const Expanded(child: HomeScreen())
                     ],
                   ),
