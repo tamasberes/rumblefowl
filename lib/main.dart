@@ -1,5 +1,6 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe
 
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
@@ -15,7 +16,34 @@ Future<void> main() async {
   await HiveManager().init();
   await PreferencesManager().init();
   runApp(const MyApp());
+  doWhenWindowReady(() {
+    const initialSize = Size(800, 600);
+    appWindow.minSize = initialSize;
+    appWindow.size = initialSize;
+    appWindow.alignment = Alignment.center;
+    appWindow.title = "rumblefowl";
+    appWindow.show();
+  });
 }
+
+class WindowButtons extends StatelessWidget {
+  const WindowButtons({Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        MinimizeWindowButton(colors: buttonColors),
+        MaximizeWindowButton(colors: buttonColors),
+        CloseWindowButton(colors: closeButtonColors),
+      ],
+    );
+  }
+}
+
+final buttonColors = WindowButtonColors(iconNormal: const Color(0xFF805306), mouseOver: const Color(0xFFF6A00C), mouseDown: const Color(0xFF805306), iconMouseOver: const Color(0xFF805306), iconMouseDown: const Color(0xFFFFD500));
+
+final closeButtonColors = WindowButtonColors(mouseOver: const Color(0xFFD32F2F), mouseDown: const Color(0xFFB71C1C), iconNormal: const Color(0xFF805306), iconMouseOver: Colors.white);
 
 void setupLogging() {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
@@ -37,10 +65,19 @@ class MyApp extends StatelessWidget {
         create: (_) => changeNotifierProviderInstance,
         child: Consumer<PreferencesManager>(
             builder: (context, theme, _) => MaterialApp(
-                  title: 'Flutter Demooh',
-                  theme: getTheme(),
-                  home: const HomeScreen(),
-                )));
+                title: 'Flutter Demooh',
+                theme: getTheme(),
+                home: Scaffold(
+                  body: Column(
+                    children: [
+                      WindowTitleBarBox(
+                          child: Row(
+                        children: [Expanded(child: MoveWindow()), const WindowButtons()],
+                      )),
+                      const Expanded(child: HomeScreen())
+                    ],
+                  ),
+                ))));
   }
 
   getTheme() {
