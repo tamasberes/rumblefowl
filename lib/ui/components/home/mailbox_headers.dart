@@ -25,41 +25,38 @@ class _MailboxesHeaderState extends State<MailboxesHeader> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.grey.shade900,
-      child: ValueListenableBuilder(
-          valueListenable: Hive.box<MailboxSettings>(mailboxesSettingsBoxName).listenable(),
-          builder: (context, Box<MailboxSettings> box, _) {
-            if (box.values.isEmpty) {
-              return const Center(
-                child: Text("Please set up a mailbox first!"),
-              );
-            }
-            return ConstrainedBox(
-                constraints: const BoxConstraints(
-                  //had to set height in advance, lazy listview size would be 0 at start
-                  minHeight: 5.0,
-                  maxHeight: 48.0,
-                ),
-                child: ListView.builder(
-                    controller: AdjustableScrollController(),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: box.values.length,
-                    itemBuilder: (context, index) {
-                      MailboxSettings currentItem = box.getAt(index)!;
-                      return ElevatedButtonWithMargin(
-                          isHighlighted: selectedIndex == index,
-                          buttonText: currentItem.emailAddress,
-                          onPressedAction: () {
-                            log.info("mailbox clicked${currentItem.emailAddress}");
+    return ValueListenableBuilder(
+        valueListenable: Hive.box<MailboxSettings>(mailboxesSettingsBoxName).listenable(),
+        builder: (context, Box<MailboxSettings> box, _) {
+          if (box.values.isEmpty) {
+            return const Center(
+              child: Text("Please set up a mailbox first!"),
+            );
+          }
+          return ConstrainedBox(
+              constraints: const BoxConstraints(
+                //had to set height in advance, lazy listview size would be 0 at start
+                minHeight: 5.0,
+                maxHeight: 48.0,
+              ),
+              child: ListView.builder(
+                  controller: AdjustableScrollController(),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: box.values.length,
+                  itemBuilder: (context, index) {
+                    MailboxSettings currentItem = box.getAt(index)!;
+                    return ElevatedButtonWithMargin(
+                        isHighlighted: selectedIndex == index,
+                        buttonText: currentItem.emailAddress,
+                        onPressedAction: () {
+                          log.info("mailbox clicked${currentItem.emailAddress}");
 
-                            setState(() {
-                              selectedIndex = index;
-                            });
-                            PreferencesManager().setSelectedMailbox(index);
+                          setState(() {
+                            selectedIndex = index;
                           });
-                    }));
-          }),
-    );
+                          PreferencesManager().setSelectedMailbox(index);
+                        });
+                  }));
+        });
   }
 }

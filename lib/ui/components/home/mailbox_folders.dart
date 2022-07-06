@@ -31,48 +31,45 @@ class _MailboxFoldersState extends State<MailboxFolders> {
   Widget build(BuildContext context) {
     PreferencesManager changeNotifierProviderInstance = PreferencesManager();
 
-    return Container(
-      color: Colors.grey.shade900,
-      child: ChangeNotifierProvider(
-          create: (_) => changeNotifierProviderInstance,
-          child: Consumer<PreferencesManager>(
-            builder: (context, value, child) => FutureBuilder<List<Mailbox>>(
-                future: MailHelper().getFoldersForMailbox(Hive.box<MailboxSettings>(mailboxesSettingsBoxName).getAt(changeNotifierProviderInstance.getSelectedMailbox())!),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) return Text('Error ${snapshot.error}');
-                  if (snapshot.connectionState != ConnectionState.done) {
-                    return const Padding(
-                      padding: EdgeInsets.all(24.0),
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  }
-                  return ConstrainedBox(
-                      constraints: const BoxConstraints(
-                          //had to set height in advance, lazy listview size would be 0 at start
-                          minHeight: 5.0,
-                          minWidth: 5,
-                          maxWidth: 232),
-                      child: ListView.builder(
-                          controller: AdjustableScrollController(),
-                          itemCount: snapshot.data?.length,
-                          itemBuilder: (context, index) {
-                            var currentItem = snapshot.data?[index];
-                            return ListTile(
-                                leading: const Icon(Icons.folder),
-                                selected: selectedIndex == index,
-                                selectedTileColor: changeNotifierProviderInstance.getIsDarkMode() ? listItemSelectedBackgroundColorDark : listItemSelectedBackgroundColor,
-                                title: Text(currentItem!.path),
-                                onTap: () {
-                                  log.info("mailbox clicked${currentItem.path}");
+    return ChangeNotifierProvider(
+        create: (_) => changeNotifierProviderInstance,
+        child: Consumer<PreferencesManager>(
+          builder: (context, value, child) => FutureBuilder<List<Mailbox>>(
+              future: MailHelper().getFoldersForMailbox(Hive.box<MailboxSettings>(mailboxesSettingsBoxName).getAt(changeNotifierProviderInstance.getSelectedMailbox())!),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) return Text('Error ${snapshot.error}');
+                if (snapshot.connectionState != ConnectionState.done) {
+                  return const Padding(
+                    padding: EdgeInsets.all(24.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                return ConstrainedBox(
+                    constraints: const BoxConstraints(
+                        //had to set height in advance, lazy listview size would be 0 at start
+                        minHeight: 5.0,
+                        minWidth: 5,
+                        maxWidth: 232),
+                    child: ListView.builder(
+                        controller: AdjustableScrollController(),
+                        itemCount: snapshot.data?.length,
+                        itemBuilder: (context, index) {
+                          var currentItem = snapshot.data?[index];
+                          return ListTile(
+                              leading: const Icon(Icons.folder),
+                              selected: selectedIndex == index,
+                              selectedTileColor: changeNotifierProviderInstance.getIsDarkMode() ? listItemSelectedBackgroundColorDark : listItemSelectedBackgroundColor,
+                              title: Text(currentItem!.path),
+                              onTap: () {
+                                log.info("mailbox clicked${currentItem.path}");
 
-                                  setState(() {
-                                    selectedIndex = index;
-                                    PreferencesManager().setSelectedFolder(currentItem.name);
-                                  });
+                                setState(() {
+                                  selectedIndex = index;
+                                  PreferencesManager().setSelectedFolder(currentItem.name);
                                 });
-                          }));
-                }),
-          )),
-    );
+                              });
+                        }));
+              }),
+        ));
   }
 }
