@@ -148,16 +148,18 @@ class _MailViewState extends State<MailView> {
     final leadingStyle = Theme.of(context).textTheme.labelLarge!;
     final valueStyle = Theme.of(context).textTheme.titleMedium!;
     return Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(children: [createLeadingLabel("From:", leadingStyle), createMailChip(snapshot.data!.from)]),
-          const SizedBox(height: spacingBetweenItemsVerticalSmall),
-          Row(children: [createLeadingLabel("To:", leadingStyle), createMailChip(snapshot.data!.to)]),
-          Row(children: [createLeadingLabel("Subject:", leadingStyle), Container(padding: const EdgeInsets.all(8.0), child: createLeadingLabel(snapshot.data!.decodeSubject()!, valueStyle))]),
-          Row(children: [createLeadingLabel("Date:", leadingStyle), createLeadingLabel(DateFormat.yMMMMEEEEd().add_jms().format(snapshot.data!.decodeDate()!), valueStyle)]),
-          const SizedBox(height: spacingBetweenItemsVerticalSmall),
-        ],
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(children: [createLeadingLabel("From:", leadingStyle), createMailChip(snapshot.data!.from)]),
+            const SizedBox(height: spacingBetweenItemsVerticalSmall),
+            Row(children: [createLeadingLabel("To:", leadingStyle), createMailChip(snapshot.data!.to)]),
+            Row(children: [createLeadingLabel("Subject:", leadingStyle), Container(padding: const EdgeInsets.all(8.0), child: createLeadingLabel(snapshot.data!.decodeSubject()!, valueStyle))]),
+            Row(children: [createLeadingLabel("Date:", leadingStyle), createLeadingLabel(DateFormat.yMMMMEEEEd().add_jms().format(snapshot.data!.decodeDate()!), valueStyle)]),
+          ],
+        ),
       ),
       Expanded(
           child: Column(
