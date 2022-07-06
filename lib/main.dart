@@ -2,19 +2,13 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:rumblefowl/services/db/hive_manager.dart';
 import 'package:rumblefowl/services/prerferences/preferences_manager.dart';
 import 'package:rumblefowl/ui/screens/home_screen.dart';
-import 'package:logging/logging.dart';
 
 final log = Logger('main');
-
-//spacing between column items
-const spacingBetweenItemsVertical = 16.0;
-const spacingBetweenItemsVerticalSmall = 8.0;
-//padding between the edges of the widget and the inside content
-const paddingWidgetEdges = 18.0;
 
 Future<void> main() async {
   setupLogging();

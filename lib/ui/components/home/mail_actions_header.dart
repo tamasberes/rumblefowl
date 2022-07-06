@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:rumblefowl/services/prerferences/preferences_manager.dart';
 import 'package:rumblefowl/ui/components/mailbox_setings/mailbox_settings_dialog.dart';
+
 import '../widgets/elevated_button_with_margin.dart';
 
 final log = Logger('MailActionsHeader');
@@ -16,45 +17,48 @@ class MailActionsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        ElevatedButtonWithMargin(
-          buttonText: 'Sync mail',
-          onPressedAction: () {
-            log.info("sync mail clicked");
-          },
-        ),
-        ElevatedButtonWithMargin(
-          buttonText: 'New E-Mail',
-          onPressedAction: () {
-            log.info("New E-Mail clicked");
-          },
-        ),
-        ElevatedButtonWithMargin(
-          buttonText: 'Setup E-Mail accounts',
-          onPressedAction: () {
-            log.info("Setup E-Mail accounts clicked");
-
-            Navigator.of(context).push(MaterialPageRoute<void>(
-                builder: (BuildContext context) {
-                  return MailboxSettingsDialog();
-                },
-                fullscreenDialog: false));
-          },
-        ),
-        ElevatedButtonWithMargin(
-          buttonText: 'Search',
-          onPressedAction: () {
-            log.info("Search clicked");
-          },
-        ),
-        Spacer(flex: 1),
-        IconButton(
-            onPressed: () {
-              PreferencesManager().toggleDarkMode();
+    return Container(
+      color: Colors.grey.shade800,
+      child: Row(
+        children: [
+          ElevatedButtonWithMargin(
+            buttonText: 'Sync mail',
+            onPressedAction: () {
+              log.info("sync mail clicked");
             },
-            icon: Icon(Icons.brightness_1))
-      ],
+          ),
+          ElevatedButtonWithMargin(
+            buttonText: 'New E-Mail',
+            onPressedAction: () {
+              log.info("New E-Mail clicked");
+            },
+          ),
+          ElevatedButtonWithMargin(
+            buttonText: 'Setup E-Mail accounts',
+            onPressedAction: () {
+              log.info("Setup E-Mail accounts clicked");
+
+              Navigator.of(context).push(MaterialPageRoute<void>(
+                  builder: (BuildContext context) {
+                    return MailboxSettingsDialog();
+                  },
+                  fullscreenDialog: false));
+            },
+          ),
+          ElevatedButtonWithMargin(
+            buttonText: 'Search',
+            onPressedAction: () {
+              log.info("Search clicked");
+            },
+          ),
+          Spacer(flex: 1),
+          IconButton(
+              onPressed: () {
+                PreferencesManager().toggleDarkMode();
+              },
+              icon: Icon(Icons.brightness_1))
+        ],
+      ),
     );
   }
 }

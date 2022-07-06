@@ -3,9 +3,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
-import '../../../main.dart';
 import '../../../services/db/hive_manager.dart';
 import '../../../services/db/mailbox_settings.dart';
+import '../widgets/utils.dart';
 import 'mailbox_settings_dialog.dart';
 
 final log = Logger('MailboxListWidget');
@@ -15,7 +15,7 @@ class MailboxSettingsMailboxListview extends StatefulWidget {
 
   //the fix did not work https://stackoverflow.com/questions/72677634/avoid-using-private-types-in-public-apis-warning-in-flutter
   @override
-  // ignore: library_private_types_in_public_api 
+  // ignore: library_private_types_in_public_api
   _MailboxSettingsMailboxListviewState createState() => _MailboxSettingsMailboxListviewState();
 }
 
@@ -33,7 +33,7 @@ class _MailboxSettingsMailboxListviewState extends State<MailboxSettingsMailboxL
             );
           }
           return Container(
-            padding:  const EdgeInsets.all(paddingWidgetEdges),
+            padding: const EdgeInsets.all(paddingWidgetEdges),
             child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: box.values.length,

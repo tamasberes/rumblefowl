@@ -1,20 +1,21 @@
+import 'dart:async';
+
 import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
-import '../../../main.dart';
+import 'package:webview_windows/webview_windows.dart';
+
 import '../../../services/db/hive_manager.dart';
 import '../../../services/db/mailbox_settings.dart';
 import '../../../services/mail/mail_helper.dart';
 import '../../../services/prerferences/preferences_manager.dart';
-import 'package:webview_windows/webview_windows.dart';
-import 'package:flutter/services.dart';
-import 'dart:async';
-import 'package:intl/date_symbol_data_local.dart';
-
 import '../widgets/outlined_button_with_margin.dart';
+import '../widgets/utils.dart';
 
 final log = Logger('MailView');
 
@@ -104,7 +105,6 @@ class _MailViewState extends State<MailView> {
           Expanded(
             child: Row(
               children: [
-                VerticalDivider(thickness: 2.0, width: 2.0, color: Theme.of(context).colorScheme.secondary),
                 Expanded(
                     child: Webview(
                   _controller,
@@ -160,7 +160,7 @@ class _MailViewState extends State<MailView> {
         ],
       ),
       Expanded(
-        child: Column(
+          child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Row(mainAxisAlignment: MainAxisAlignment.end, children: [

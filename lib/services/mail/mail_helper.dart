@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:enough_mail/enough_mail.dart';
 import 'package:logging/logging.dart';
+
 import '../db/mailbox_settings.dart';
 
 final log = Logger('MailboxesHeader');

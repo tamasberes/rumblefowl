@@ -65,6 +65,6 @@ class PreferencesManager with ChangeNotifier {
 
   setIsDarkMode(bool isDarkMode) {
     prefs.setBool(keyIsDarkMode, isDarkMode);
-     notifyListeners();
- }
+    notifyListeners();
+  }
 }

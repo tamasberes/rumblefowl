@@ -34,3 +34,33 @@ class _HomeScreenState extends State<HomeScreen> {
     ]));
   }
 }
+
+class RumbleHorizontalDivider extends StatelessWidget {
+  const RumbleHorizontalDivider({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Divider(
+      height: 2.0,
+      thickness: 2.0,
+      color: Theme.of(context).colorScheme.secondary,
+    );
+  }
+}
+
+class RumbleVerticalDivider extends StatelessWidget {
+  const RumbleVerticalDivider({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return VerticalDivider(
+      width: 2.0,
+      thickness: 2.0,
+      color: Theme.of(context).colorScheme.secondary,
+    );
+  }
+}
