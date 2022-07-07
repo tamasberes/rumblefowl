@@ -48,7 +48,7 @@ class _EmailListState extends State<EmailList> {
                         //had to set height in advance, lazy listview size would be 0 at start
                         minHeight: 5.0,
                         minWidth: 50,
-                        maxWidth: 232),
+                        maxWidth: 260.0),
                     child: ListView.builder(
                         controller: AdjustableScrollController(),
                         itemCount: snapshot.data?.length,
