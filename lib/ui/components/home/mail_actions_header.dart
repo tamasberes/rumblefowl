@@ -6,6 +6,7 @@ import 'package:logging/logging.dart';
 import 'package:rumblefowl/services/prerferences/preferences_manager.dart';
 import 'package:rumblefowl/ui/components/mailbox_setings/mailbox_settings_dialog.dart';
 
+import '../new_mail/compose_new_mail.dart';
 import '../widgets/elevated_button_with_margin.dart';
 
 final log = Logger('MailActionsHeader');
@@ -29,20 +30,19 @@ class MailActionsHeader extends StatelessWidget {
           buttonText: 'New E-Mail',
           onPressedAction: () {
             log.info("New E-Mail clicked");
+
+            openNewMailDialog(context);
           },
         ),
         ElevatedButtonWithMargin(
-          buttonText: 'Setup E-Mail accounts',
-          onPressedAction: () {
-            log.info("Setup E-Mail accounts clicked");
-
-            Navigator.of(context).push(MaterialPageRoute<void>(
-                builder: (BuildContext context) {
-                  return MailboxSettingsDialog();
-                },
-                fullscreenDialog: false));
-          },
-        ),
+            buttonText: 'Setup E-Mail accounts',
+            onPressedAction: () {
+              log.info("Setup E-Mail accounts clicked");
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MailboxSettingsDialog()),
+              );
+            }),
         ElevatedButtonWithMargin(
           buttonText: 'Search',
           onPressedAction: () {
@@ -56,6 +56,13 @@ class MailActionsHeader extends StatelessWidget {
             },
             icon: Icon(Icons.brightness_1))
       ],
+    );
+  }
+
+  void openNewMailDialog(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ComposeNewMailWindow()),
     );
   }
 }

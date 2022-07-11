@@ -19,10 +19,11 @@ Future<void> main() async {
   doWhenWindowReady(() {
     const initialSize = Size(800, 600);
     appWindow.minSize = initialSize;
-    appWindow.size = initialSize;
+  //  appWindow.size = initialSize;
     appWindow.alignment = Alignment.center;
     appWindow.title = "rumblefowl";
-    appWindow.show();
+  //  appWindow.show();
+    appWindow.maximize();
   });
 }
 
@@ -43,7 +44,12 @@ class WindowButtons extends StatelessWidget {
 
 final buttonColors = WindowButtonColors(iconNormal: const Color(0xFFfefefe), mouseOver: const Color(0xFFF6A00C), mouseDown: const Color(0xFF805306), iconMouseOver: const Color(0xFF805306), iconMouseDown: const Color(0xFFFFD500));
 
-final closeButtonColors = WindowButtonColors(iconNormal: const Color(0xFFfefefe), iconMouseOver: Colors.white, mouseOver: const Color(0xFFD32F2F), mouseDown: const Color(0xFFB71C1C), );
+final closeButtonColors = WindowButtonColors(
+  iconNormal: const Color(0xFFfefefe),
+  iconMouseOver: Colors.white,
+  mouseOver: const Color(0xFFD32F2F),
+  mouseDown: const Color(0xFFB71C1C),
+);
 
 void setupLogging() {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
@@ -70,7 +76,8 @@ class MyApp extends StatelessWidget {
                 home: Scaffold(
                   body: Column(
                     children: [
-                      Container(color: Colors.purple.shade200,
+                      Container(
+                        color: Colors.purple.shade200,
                         child: WindowTitleBarBox(
                             child: Row(
                           children: [Expanded(child: MoveWindow()), const WindowButtons()],
