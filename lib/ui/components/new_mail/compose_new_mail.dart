@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import 'package:zefyrka/zefyrka.dart';
 
 import '../widgets/utils.dart';
 
@@ -20,7 +21,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
         body: Padding(
           padding: const EdgeInsets.all(paddingWidgetEdges),
           child: Expanded(
-            child: Column(children: <Widget>[getFrom(), getTo(), getCC(), getBCC(), getSubject()]),
+            child: Column(children: <Widget>[getFrom(), getTo(), getCC(), getBCC(), getSubject(), getWysiwygEditor()]),
           ),
         ));
   }
@@ -97,7 +98,8 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
     final leadingStyle = Theme.of(context).textTheme.labelLarge!;
     return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       createLeadingLabel("Subject:", leadingStyle),
-      const SizedBox( width: 210,
+      const SizedBox(
+        width: 210,
         child: TextField(
             obscureText: true,
             decoration: InputDecoration(
@@ -105,6 +107,26 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
             )),
       )
     ]);
+  }
+
+  getWysiwygEditor() {
+    ZefyrController _controller = ZefyrController();
+    
+    return Container(color: Colors.grey.shade700,
+      child: SizedBox(height: 500,
+        child: Column(
+          children: [
+            ZefyrToolbar.basic(controller: _controller),
+            Expanded(
+              child: ZefyrEditor(
+                padding: EdgeInsets.only(left: 16, right: 16),
+                controller: _controller,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
