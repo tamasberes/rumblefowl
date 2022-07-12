@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import 'package:rumblefowl/ui/components/widgets/outlined_button_with_margin.dart';
 import 'package:zefyrka/zefyrka.dart';
 
 import '../widgets/utils.dart';
@@ -22,7 +23,13 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
           padding: const EdgeInsets.all(paddingWidgetEdges),
           child: Expanded(
             child: Column(children: <Widget>[
-              getFrom(),
+              Row(
+                children: [
+                  getFrom(),
+                  getActionButtons(),
+                ],
+              ),
+              getReplyToAddress(),
               getTo(),
               getCC(),
               getBCC(),
@@ -74,8 +81,16 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
     );
   }
 
+  Widget getReplyToAddress() {
+    final leadingStyle = Theme.of(context).textTheme.labelLarge!;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [createLeadingLabel("Reply to address:", leadingStyle), const AutocompleteBasicUserExample()],
+    );
+  }
+
   Widget createLeadingLabel(String labelText, TextStyle style) {
-    return SizedBox(width: 60, child: Padding(padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0), child: Text(labelText, style: style)));
+    return SizedBox(width: 90, child: Padding(padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0), child: Text(labelText, style: style)));
   }
 
   Widget getTo() {
@@ -118,7 +133,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
   }
 
   getWysiwygEditor() {
-    ZefyrController _controller = ZefyrController();
+    ZefyrController controller = ZefyrController();
 
     return Container(
       color: Colors.grey.shade800,
@@ -126,16 +141,29 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
         height: 500,
         child: Column(
           children: [
-            ZefyrToolbar.basic(controller: _controller),
+            ZefyrToolbar.basic(controller: controller),
             Expanded(
               child: ZefyrEditor(
                 padding: const EdgeInsets.only(left: 16, right: 16),
-                controller: _controller,
+                controller: controller,
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  getActionButtons() {
+    return Wrap(
+      direction: Axis.horizontal,
+      spacing: 8.0,
+      runSpacing: 8.0,
+      children: [
+        OutlinedButtonWithMargin(onPressedAction: () {}, buttonText: "Send"),
+        OutlinedButtonWithMargin(onPressedAction: () {}, buttonText: "Save draft"),
+        OutlinedButtonWithMargin(onPressedAction: () {}, buttonText: "Delete"),
+      ],
     );
   }
 }
