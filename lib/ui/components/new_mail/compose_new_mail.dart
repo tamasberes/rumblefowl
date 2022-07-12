@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:logging/logging.dart';
-import 'package:rumblefowl/ui/components/widgets/outlined_button_with_margin.dart';
+import 'package:rumblefowl/services/db/hive_manager.dart';
+import 'package:rumblefowl/services/prerferences/preferences_manager.dart';
 import 'package:zefyrka/zefyrka.dart';
 
+import '../../../services/db/mailbox_settings.dart';
 import '../widgets/utils.dart';
 
 final log = Logger('ComposeNewMailWindow');
@@ -19,26 +22,22 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text("Compose new E-mail")),
-        body: Padding(
-          padding: const EdgeInsets.all(paddingWidgetEdges),
-          child: Expanded(
-            child: Column(children: <Widget>[
-              Row(
-                children: [
-                  getFrom(),
-                  getActionButtons(),
-                ],
-              ),
-              getReplyToAddress(),
-              getTo(),
-              getCC(),
-              getBCC(),
-              getSubject(),
-              Container(height: spacingBetweenItemsVertical),
-              Expanded(child: Row(children: [Expanded(child: getWysiwygEditor())]))
-            ]),
-          ),
-        ));
+        body:  Column(children: <Widget>[
+                Row(
+                  children: [
+                    getFrom(),
+                    getActionButtons(),
+                  ],
+                ),
+                getTo(),
+                getReplyToAddress(),
+                getCC(),
+                getBCC(),
+                getSubject(),
+                Container(height: spacingBetweenItemsVertical),
+                Expanded(child: Row(children: [Expanded(child: getWysiwygEditor())]))
+              ]),
+        );
   }
 
   indexChanged(int value) {
@@ -48,10 +47,12 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
   int getCurrentIndex() {
     return 0;
   }
-
-  String dropdownValue = 'example@example.com';
+  
+  var dropdownValue = Hive.box<MailboxSettings>(mailboxesSettingsBoxName).values.elementAt(PreferencesManager().getSelectedMailbox()).emailAddress;
 
   Widget getFrom() {
+    var values = Hive.box<MailboxSettings>(mailboxesSettingsBoxName).values;
+    //use mailbox selected by user
     final leadingStyle = Theme.of(context).textTheme.labelLarge!;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -67,30 +68,49 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
           ),
           onChanged: (String? newValue) {
             setState(() {
+              log.info(newValue);
               dropdownValue = newValue!;
             });
           },
-          items: <String>['example@example.com', 'example@example.com2', 'example@example.com3', 'example@example.com4'].map<DropdownMenuItem<String>>((String value) {
+          items: values.map<DropdownMenuItem<String>>((value) {
             return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
+              value: value.emailAddress,
+              child: Text(value.emailAddress),
             );
           }).toList(),
         ),
       ],
     );
   }
+  //       MailboxSettings currentItem = box.getAt(index)!;
 
   Widget getReplyToAddress() {
     final leadingStyle = Theme.of(context).textTheme.labelLarge!;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: [createLeadingLabel("Reply to address:", leadingStyle), const AutocompleteBasicUserExample()],
+      children: [
+        createLeadingLabel("Reply to:", leadingStyle),
+        const SizedBox(
+          width: 210,
+          child: TextField(
+              decoration: InputDecoration(
+            border: UnderlineInputBorder(),
+          )),
+        )
+      ],
     );
   }
 
   Widget createLeadingLabel(String labelText, TextStyle style) {
-    return SizedBox(width: 90, child: Padding(padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0), child: Text(labelText, style: style)));
+    return SizedBox(
+        width: 90,
+        child: Padding(
+            padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
+            child: Text(
+              labelText,
+              style: style,
+              textAlign: TextAlign.end,
+            )));
   }
 
   Widget getTo() {
@@ -137,32 +157,38 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
 
     return Container(
       color: Colors.grey.shade800,
-      child: SizedBox(
-        height: 500,
-        child: Column(
-          children: [
-            ZefyrToolbar.basic(controller: controller),
-            Expanded(
-              child: ZefyrEditor(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                controller: controller,
-              ),
+      child: Column(
+        children: [
+          ZefyrToolbar.basic(controller: controller),
+          Expanded(
+            child: ZefyrEditor(
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              controller: controller,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   getActionButtons() {
-    return Wrap(
-      direction: Axis.horizontal,
-      spacing: 8.0,
-      runSpacing: 8.0,
+    return Wrap(spacing: 8,
       children: [
-        OutlinedButtonWithMargin(onPressedAction: () {}, buttonText: "Send"),
-        OutlinedButtonWithMargin(onPressedAction: () {}, buttonText: "Save draft"),
-        OutlinedButtonWithMargin(onPressedAction: () {}, buttonText: "Delete"),
+        ElevatedButton.icon(
+          icon: const Text('Send'),
+          label: const Icon(Icons.send),
+          onPressed: () => {},
+        ),
+        ElevatedButton.icon(
+          icon: const Text('Forward'),
+          label: const Icon(Icons.forward_to_inbox),
+          onPressed: () => {},
+        ),
+        ElevatedButton.icon(
+          icon: const Text('Delete'),
+          label: const Icon(Icons.delete_forever),
+          onPressed: () => {},
+        ),
       ],
     );
   }
