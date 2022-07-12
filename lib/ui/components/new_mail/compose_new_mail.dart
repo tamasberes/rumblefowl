@@ -21,7 +21,15 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
         body: Padding(
           padding: const EdgeInsets.all(paddingWidgetEdges),
           child: Expanded(
-            child: Column(children: <Widget>[getFrom(), getTo(), getCC(), getBCC(), getSubject(), getWysiwygEditor()]),
+            child: Column(children: <Widget>[
+              getFrom(),
+              getTo(),
+              getCC(),
+              getBCC(),
+              getSubject(),
+              Container(height: spacingBetweenItemsVertical),
+              Expanded(child: Row(children: [Expanded(child: getWysiwygEditor())]))
+            ]),
           ),
         ));
   }
@@ -111,15 +119,17 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
 
   getWysiwygEditor() {
     ZefyrController _controller = ZefyrController();
-    
-    return Container(color: Colors.grey.shade700,
-      child: SizedBox(height: 500,
+
+    return Container(
+      color: Colors.grey.shade800,
+      child: SizedBox(
+        height: 500,
         child: Column(
           children: [
             ZefyrToolbar.basic(controller: _controller),
             Expanded(
               child: ZefyrEditor(
-                padding: EdgeInsets.only(left: 16, right: 16),
+                padding: const EdgeInsets.only(left: 16, right: 16),
                 controller: _controller,
               ),
             ),
