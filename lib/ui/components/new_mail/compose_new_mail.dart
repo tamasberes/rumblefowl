@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:logging/logging.dart';
+import 'package:provider/provider.dart';
 import 'package:rumblefowl/services/db/hive_manager.dart';
 import 'package:rumblefowl/services/prerferences/preferences_manager.dart';
 import 'package:zefyrka/zefyrka.dart';
 
 import '../../../services/db/mailbox_settings.dart';
+import '../../util/scrollcontroller.dart';
+import '../widgets/elevated_button_with_margin.dart';
 import '../widgets/utils.dart';
 
 final log = Logger('ComposeNewMailWindow');
+const inputItemWidth = 223.0;
 
 class ComposeNewMailWindow extends StatefulWidget {
   const ComposeNewMailWindow({Key? key}) : super(key: key);
@@ -21,23 +25,23 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("Compose new E-mail")),
-        body:  Column(children: <Widget>[
-                Row(
-                  children: [
-                    getFrom(),
-                    getActionButtons(),
-                  ],
-                ),
-                getTo(),
-                getReplyToAddress(),
-                getCC(),
-                getBCC(),
-                getSubject(),
-                Container(height: spacingBetweenItemsVertical),
-                Expanded(child: Row(children: [Expanded(child: getWysiwygEditor())]))
-              ]),
-        );
+      appBar: AppBar(title: const Text("Compose new E-mail")),
+      body: Column(children: <Widget>[
+        Row(
+          children: [
+            getFrom(),
+            getActionButtons(),
+          ],
+        ),
+        getTo(),
+        getReplyToAddress(),
+        getCC(),
+        getBCC(),
+        getSubject(),
+        Container(height: spacingBetweenItemsVertical),
+        Expanded(child: Row(children: [Expanded(child: getWysiwygEditor())]))
+      ]),
+    );
   }
 
   indexChanged(int value) {
@@ -47,7 +51,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
   int getCurrentIndex() {
     return 0;
   }
-  
+
   var dropdownValue = Hive.box<MailboxSettings>(mailboxesSettingsBoxName).values.elementAt(PreferencesManager().getSelectedMailbox()).emailAddress;
 
   Widget getFrom() {
@@ -91,7 +95,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
       children: [
         createLeadingLabel("Reply to:", leadingStyle),
         const SizedBox(
-          width: 210,
+          width: inputItemWidth,
           child: TextField(
               decoration: InputDecoration(
             border: UnderlineInputBorder(),
@@ -115,10 +119,63 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
 
   Widget getTo() {
     final leadingStyle = Theme.of(context).textTheme.labelLarge!;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [createLeadingLabel("To:", leadingStyle), const AutocompleteBasicUserExample()],
-    );
+    final fieldText = TextEditingController();
+    final FocusNode myFocusNode = FocusNode();
+
+    return ChangeNotifierProvider(
+        create: (_) => EmailListNotifier(),
+        builder: (context, child) {
+          return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            createLeadingLabel("To:", leadingStyle),
+            SizedBox(
+              width: inputItemWidth,
+              child: TextField(
+                focusNode: myFocusNode,
+                controller: fieldText,
+                onSubmitted: (value) {
+                  //value is entered text after ENTER press
+                  //you can also call any function here or make setState() to assign value to other variable
+                  log.info("to input done:$value");
+                  Provider.of<EmailListNotifier>(context, listen: false).add(value);
+                  fieldText.clear();
+                  myFocusNode.requestFocus();
+                },
+                textInputAction: TextInputAction.search,
+              ),
+            ),
+            Expanded(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                    //had to set height in advance, lazy listview size would be 0 at start
+                    minHeight: 48.0,
+                    minWidth: 400,
+                    maxHeight: 48.0),
+                child: Container(
+                  margin: const EdgeInsets.fromLTRB(spacingBetweenItemsVertical, 0, 0, 0),
+                  // color: Colors.red,
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      controller: AdjustableScrollController(),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: Provider.of<EmailListNotifier>(context, listen: true).get().length,
+                      itemBuilder: (context, index) {
+                        String currentItem = Provider.of<EmailListNotifier>(context, listen: true).get().elementAt(index);
+                        return ElevatedButtonWithMargin(
+                            //isHighlighted: selectedIndex == index,
+                            buttonText: currentItem,
+                            onPressedAction: () {
+                              log.info("mailbox clicked$currentItem");
+
+                              setState(() {
+                                //selectedIndex = index;
+                              });
+                            });
+                      }),
+                ),
+              ),
+            ),
+          ]);
+        });
   }
 
   Widget getCC() {
@@ -142,12 +199,11 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
     return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       createLeadingLabel("Subject:", leadingStyle),
       const SizedBox(
-        width: 210,
+        width: inputItemWidth,
         child: TextField(
-            obscureText: true,
-            decoration: InputDecoration(
-              labelText: 'Subject',
-            )),
+          keyboardType: TextInputType.emailAddress,
+          obscureText: false,
+        ),
       )
     ]);
   }
@@ -172,24 +228,36 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
   }
 
   getActionButtons() {
-    return Wrap(spacing: 8,
-      children: [
-        ElevatedButton.icon(
-          icon: const Text('Send'),
-          label: const Icon(Icons.send),
-          onPressed: () => {},
-        ),
-        ElevatedButton.icon(
-          icon: const Text('Forward'),
-          label: const Icon(Icons.forward_to_inbox),
-          onPressed: () => {},
-        ),
-        ElevatedButton.icon(
-          icon: const Text('Delete'),
-          label: const Icon(Icons.delete_forever),
-          onPressed: () => {},
-        ),
-      ],
+    final rectangleStyle = ElevatedButton.styleFrom(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4.0),
+      ),
+    );
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 8.0),
+      child: Wrap(
+        spacing: 8,
+        children: [
+          ElevatedButton.icon(
+            style: rectangleStyle,
+            label: const Icon(Icons.send),
+            icon: const Text('Send'),
+            onPressed: () => {log.info("send clicked")},
+          ),
+          ElevatedButton.icon(
+            style: rectangleStyle,
+            icon: const Text('Forward'),
+            label: const Icon(Icons.forward_to_inbox),
+            onPressed: () => {log.info("Forward clicked")},
+          ),
+          ElevatedButton.icon(
+            style: rectangleStyle,
+            icon: const Text('Delete'),
+            label: const Icon(Icons.delete_forever),
+            onPressed: () => {log.info("Delete clicked")},
+          ),
+        ],
+      ),
     );
   }
 }
@@ -235,7 +303,7 @@ class AutocompleteBasicUserExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 210,
+      width: inputItemWidth,
       child: Autocomplete<User>(
         displayStringForOption: _displayStringForOption,
         optionsBuilder: (TextEditingValue textEditingValue) {
@@ -247,9 +315,22 @@ class AutocompleteBasicUserExample extends StatelessWidget {
           });
         },
         onSelected: (User selection) {
-          debugPrint('You just selected ${_displayStringForOption(selection)}');
+          log.info('You just selected ${_displayStringForOption(selection)}');
         },
       ),
     );
+  }
+}
+
+class EmailListNotifier extends ChangeNotifier {
+  List<String> emails = [];
+
+  List<String> get() {
+    return emails;
+  }
+
+  add(String email) {
+    emails.add(email);
+    notifyListeners();
   }
 }
