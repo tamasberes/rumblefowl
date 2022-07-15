@@ -1,8 +1,11 @@
 import 'dart:collection';
 
 import 'package:enough_mail/enough_mail.dart';
+import 'package:hive/hive.dart';
 import 'package:logging/logging.dart';
+import 'package:rumblefowl/ui/components/new_mail/compose_mail_data.dart';
 
+import '../db/hive_manager.dart';
 import '../db/mailbox_settings.dart';
 
 final log = Logger('MailboxesHeader');
@@ -13,11 +16,6 @@ class MailHelper {
   Future<MailClient> login(MailboxSettings mailbox) async {
     final config = await Discover.discover(mailbox.emailAddress);
     if (config == null) {
-      // note that you can also directly create an account when
-      // you cannot auto-discover the settings:
-      // Compare the [MailAccount.fromManualSettings]
-      // and [MailAccount.fromManualSettingsWithAuth]
-      // methods for details.
       log.warning('Unable to auto-discover settings for $mailbox.emailAddress');
       throw BaseMailException("Unable to auto-discover settings for $mailbox.emailAddress");
     }
@@ -51,5 +49,30 @@ class MailHelper {
     var mailbox = await getFoldersForMailbox(mailboxSettings);
     var messagesInSelectedFolder = await loggedInMailboxes[mailboxSettings.emailAddress]!.fetchMessages(fetchPreference: FetchPreference.full, mailbox: mailbox.firstWhere((element) => element.name == folder));
     return messagesInSelectedFolder.firstWhere((element) => element.guid == guid);
+  }
+
+  Future<void> sendMail(int mailboxIndex, ComposeMailData state) async {
+    var mailbox = Hive.box<MailboxSettings>(mailboxesSettingsBoxName).getAt(mailboxIndex)!;
+    var messageBuilder = MessageBuilder();
+    messageBuilder.from = [];
+    messageBuilder.from!.add(MailAddress("", state.fromEmail));
+
+    for (var element in state.toEmails) {
+      messageBuilder.addRecipient(MailAddress("", element), group: RecipientGroup.to);
+    }
+    messageBuilder.subject = state.subject;
+
+    for (var element in state.ccEmails) {
+      messageBuilder.addRecipient(MailAddress("", element), group: RecipientGroup.cc);
+    }
+
+    for (var element in state.bccEmails) {
+      messageBuilder.addRecipient(MailAddress("", element), group: RecipientGroup.bcc);
+    }
+
+    //TODO maybe only add if it's html? but it's duplicated anyway?
+    messageBuilder.addTextHtml(state.content);
+    var mailclient = await login(mailbox);
+    await mailclient.sendMessage(messageBuilder.buildMimeMessage());
   }
 }

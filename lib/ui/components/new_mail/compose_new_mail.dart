@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:logging/logging.dart';
+import 'package:notustohtml/notustohtml.dart';
 import 'package:provider/provider.dart';
 import 'package:rumblefowl/services/db/hive_manager.dart';
+import 'package:rumblefowl/services/mail/mail_helper.dart';
 import 'package:rumblefowl/services/prerferences/preferences_manager.dart';
 import 'package:zefyrka/zefyrka.dart';
 
@@ -10,6 +14,8 @@ import '../../../services/db/mailbox_settings.dart';
 import '../../util/scrollcontroller.dart';
 import '../widgets/elevated_button_with_margin.dart';
 import '../widgets/utils.dart';
+import 'compose_mail_data.dart';
+import 'email_list_notifier.dart';
 
 final log = Logger('ComposeNewMailWindow');
 const inputItemWidth = 223.0;
@@ -22,6 +28,8 @@ class ComposeNewMailWindow extends StatefulWidget {
 }
 
 class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
+  final state = ComposeMailData("", [], "", [], [], "", "");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,10 +41,10 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
             getActionButtons(),
           ],
         ),
-        getTo(),
+        getTextInputWithChips("To", state.toEmails),
         getReplyToAddress(),
-        getCC(),
-        getBCC(),
+        getTextInputWithChips("CC", state.ccEmails),
+        getTextInputWithChips("BCC", state.bccEmails),
         getSubject(),
         Container(height: spacingBetweenItemsVertical),
         Expanded(child: Row(children: [Expanded(child: getWysiwygEditor())]))
@@ -74,6 +82,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
             setState(() {
               log.info(newValue);
               dropdownValue = newValue!;
+              state.fromEmail = newValue;
             });
           },
           items: values.map<DropdownMenuItem<String>>((value) {
@@ -86,20 +95,21 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
       ],
     );
   }
-  //       MailboxSettings currentItem = box.getAt(index)!;
 
+  //       MailboxSettings currentItem = box.getAt(index)!;
   Widget getReplyToAddress() {
     final leadingStyle = Theme.of(context).textTheme.labelLarge!;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         createLeadingLabel("Reply to:", leadingStyle),
-        const SizedBox(
+        SizedBox(
           width: inputItemWidth,
           child: TextField(
-              decoration: InputDecoration(
-            border: UnderlineInputBorder(),
-          )),
+            onChanged: (text) {
+              state.replyTo = text;
+            },
+          ),
         )
       ],
     );
@@ -117,7 +127,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
             )));
   }
 
-  Widget getTo() {
+  Widget getTextInputWithChips(String label, List<String> list) {
     final leadingStyle = Theme.of(context).textTheme.labelLarge!;
     final fieldText = TextEditingController();
     final FocusNode myFocusNode = FocusNode();
@@ -126,7 +136,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
         create: (_) => EmailListNotifier(),
         builder: (context, child) {
           return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            createLeadingLabel("To:", leadingStyle),
+            createLeadingLabel(label, leadingStyle),
             SizedBox(
               width: inputItemWidth,
               child: TextField(
@@ -139,6 +149,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
                   Provider.of<EmailListNotifier>(context, listen: false).add(value);
                   fieldText.clear();
                   myFocusNode.requestFocus();
+                  list.add(value);
                 },
                 textInputAction: TextInputAction.search,
               ),
@@ -178,39 +189,31 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
         });
   }
 
-  Widget getCC() {
-    final leadingStyle = Theme.of(context).textTheme.labelLarge!;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [createLeadingLabel("CC:", leadingStyle), const AutocompleteBasicUserExample()],
-    );
-  }
-
-  Widget getBCC() {
-    final leadingStyle = Theme.of(context).textTheme.labelLarge!;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [createLeadingLabel("BCC:", leadingStyle), const AutocompleteBasicUserExample()],
-    );
-  }
-
   Widget getSubject() {
     final leadingStyle = Theme.of(context).textTheme.labelLarge!;
     return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       createLeadingLabel("Subject:", leadingStyle),
-      const SizedBox(
+      SizedBox(
         width: inputItemWidth,
         child: TextField(
           keyboardType: TextInputType.emailAddress,
           obscureText: false,
+          onChanged: (text) {
+            state.subject = text;
+          },
         ),
       )
     ]);
   }
 
+  final converter = const NotusHtmlCodec();
   getWysiwygEditor() {
     ZefyrController controller = ZefyrController();
+    controller.addListener(() {
+        String html = const NotusHtmlCodec().encoder.convert(controller.document.toDelta());
 
+      state.content = converter.encoder(controller.document.toDelta());
+    });
     return Container(
       color: Colors.grey.shade800,
       child: Column(
@@ -242,7 +245,9 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
             style: rectangleStyle,
             label: const Icon(Icons.send),
             icon: const Text('Send'),
-            onPressed: () => {log.info("send clicked")},
+            onPressed: () {
+              onSendClicked();
+            },
           ),
           ElevatedButton.icon(
             style: rectangleStyle,
@@ -259,6 +264,16 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
         ],
       ),
     );
+  }
+
+  //gathers filled out values, composes an email and send it
+  onSendClicked() async {
+    log.info("onSendClicked:${jsonEncode(state)}");
+
+    await MailHelper().sendMail(PreferencesManager().getSelectedMailbox(), state);
+
+    log.info("email sent");
+
   }
 }
 
@@ -319,18 +334,5 @@ class AutocompleteBasicUserExample extends StatelessWidget {
         },
       ),
     );
-  }
-}
-
-class EmailListNotifier extends ChangeNotifier {
-  List<String> emails = [];
-
-  List<String> get() {
-    return emails;
-  }
-
-  add(String email) {
-    emails.add(email);
-    notifyListeners();
   }
 }
