@@ -3,10 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:logging/logging.dart';
-import 'package:notustohtml/notustohtml.dart';
 import 'package:provider/provider.dart';
 import 'package:rumblefowl/services/db/hive_manager.dart';
-import 'package:rumblefowl/services/mail/mail_helper.dart';
 import 'package:rumblefowl/services/prerferences/preferences_manager.dart';
 import 'package:zefyrka/zefyrka.dart';
 
@@ -206,13 +204,12 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
     ]);
   }
 
-  final converter = const NotusHtmlCodec();
   getWysiwygEditor() {
     ZefyrController controller = ZefyrController();
     controller.addListener(() {
-        String html = const NotusHtmlCodec().encoder.convert(controller.document.toDelta());
+        //String html = const NotusHtmlCodec().encoder.convert(controller.document.toDelta());
 
-      state.content = converter.encoder(controller.document.toDelta());
+    //  state.content = converter.encoder(controller.document.toDelta());
     });
     return Container(
       color: Colors.grey.shade800,
@@ -270,7 +267,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
   onSendClicked() async {
     log.info("onSendClicked:${jsonEncode(state)}");
 
-    await MailHelper().sendMail(PreferencesManager().getSelectedMailbox(), state);
+    //await MailHelper().sendMail(PreferencesManager().getSelectedMailbox());
 
     log.info("email sent");
 
