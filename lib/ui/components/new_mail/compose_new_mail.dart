@@ -28,6 +28,8 @@ class ComposeNewMailWindow extends StatefulWidget {
 class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
   final state = ComposeMailData("", [], "", [], [], "", "");
 
+  final decorationForTextFields = const InputDecoration(border: OutlineInputBorder());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,10 +41,14 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
             getActionButtons(),
           ],
         ),
-        getTextInputWithChips("To", state.toEmails),
+        getTextInputWithChips("To:", state.toEmails),
+        Container(height: spacingBetweenItemsVertical),
         getReplyToAddress(),
-        getTextInputWithChips("CC", state.ccEmails),
-        getTextInputWithChips("BCC", state.bccEmails),
+        Container(height: spacingBetweenItemsVertical),
+        getTextInputWithChips("CC:", state.ccEmails),
+        Container(height: spacingBetweenItemsVertical),
+        getTextInputWithChips("BCC:", state.bccEmails),
+        Container(height: spacingBetweenItemsVertical),
         getSubject(),
         Container(height: spacingBetweenItemsVertical),
         Expanded(child: Row(children: [Expanded(child: getWysiwygEditor())]))
@@ -104,6 +110,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
         SizedBox(
           width: inputItemWidth,
           child: TextField(
+            decoration: decorationForTextFields,
             onChanged: (text) {
               state.replyTo = text;
             },
@@ -140,6 +147,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
               child: TextField(
                 focusNode: myFocusNode,
                 controller: fieldText,
+                decoration: decorationForTextFields,
                 onSubmitted: (value) {
                   //value is entered text after ENTER press
                   //you can also call any function here or make setState() to assign value to other variable
@@ -169,16 +177,19 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
                       itemCount: Provider.of<EmailListNotifier>(context, listen: true).get().length,
                       itemBuilder: (context, index) {
                         String currentItem = Provider.of<EmailListNotifier>(context, listen: true).get().elementAt(index);
-                        return ElevatedButtonWithMargin(
-                            //isHighlighted: selectedIndex == index,
-                            buttonText: currentItem,
-                            onPressedAction: () {
-                              log.info("mailbox clicked$currentItem");
-
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                          child: InputChip(
+                            key: UniqueKey(),
+                            avatar: Text(currentItem),
+                            label: const Icon(Icons.delete),
+                            onSelected: (bool value) {
                               setState(() {
-                                //selectedIndex = index;
+                                Provider.of<EmailListNotifier>(context, listen: false).removeAt(index);
                               });
-                            });
+                            },
+                          ),
+                        );
                       }),
                 ),
               ),
@@ -194,6 +205,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
       SizedBox(
         width: inputItemWidth,
         child: TextField(
+          decoration: decorationForTextFields,
           keyboardType: TextInputType.emailAddress,
           obscureText: false,
           onChanged: (text) {
@@ -207,9 +219,9 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
   getWysiwygEditor() {
     ZefyrController controller = ZefyrController();
     controller.addListener(() {
-        //String html = const NotusHtmlCodec().encoder.convert(controller.document.toDelta());
+      //String html = const NotusHtmlCodec().encoder.convert(controller.document.toDelta());
 
-    //  state.content = converter.encoder(controller.document.toDelta());
+      //  state.content = converter.encoder(controller.document.toDelta());
     });
     return Container(
       color: Colors.grey.shade800,
@@ -270,7 +282,6 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
     //await MailHelper().sendMail(PreferencesManager().getSelectedMailbox());
 
     log.info("email sent");
-
   }
 }
 

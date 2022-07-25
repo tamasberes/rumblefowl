@@ -7,6 +7,11 @@ class EmailListNotifier extends ChangeNotifier {
     return emails;
   }
 
+  removeAt(int index) {
+    emails.removeAt(index);
+    notifyListeners();
+  }
+
   add(String email) {
     emails.add(email);
     notifyListeners();
