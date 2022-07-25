@@ -10,7 +10,6 @@ import 'package:zefyrka/zefyrka.dart';
 
 import '../../../services/db/mailbox_settings.dart';
 import '../../util/scrollcontroller.dart';
-import '../widgets/elevated_button_with_margin.dart';
 import '../widgets/utils.dart';
 import 'compose_mail_data.dart';
 import 'email_list_notifier.dart';
@@ -28,7 +27,7 @@ class ComposeNewMailWindow extends StatefulWidget {
 class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
   final state = ComposeMailData("", [], "", [], [], "", "");
 
-  final decorationForTextFields = const InputDecoration(border: OutlineInputBorder());
+  final decorationForTextFields = const InputDecoration(border: OutlineInputBorder(), isDense: true);
 
   @override
   Widget build(BuildContext context) {
