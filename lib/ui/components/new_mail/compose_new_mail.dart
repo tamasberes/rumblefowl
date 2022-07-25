@@ -4,15 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
+import 'package:rumblefowl/UI/components/Widgets/utils.dart';
 import 'package:rumblefowl/services/db/hive_manager.dart';
 import 'package:rumblefowl/services/prerferences/preferences_manager.dart';
 import 'package:zefyrka/zefyrka.dart';
 
 import '../../../services/db/mailbox_settings.dart';
 import '../../util/scrollcontroller.dart';
-import '../widgets/utils.dart';
 import 'compose_mail_data.dart';
 import 'email_list_notifier.dart';
+import 'package:email_validator/email_validator.dart';
 
 final log = Logger('ComposeNewMailWindow');
 const inputItemWidth = 223.0;
@@ -135,7 +136,6 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
     final leadingStyle = Theme.of(context).textTheme.labelLarge!;
     final fieldText = TextEditingController();
     final FocusNode myFocusNode = FocusNode();
-
     return ChangeNotifierProvider(
         create: (_) => EmailListNotifier(),
         builder: (context, child) {
@@ -151,45 +151,58 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
                   //value is entered text after ENTER press
                   //you can also call any function here or make setState() to assign value to other variable
                   log.info("to input done:$value");
-                  Provider.of<EmailListNotifier>(context, listen: false).add(value);
-                  fieldText.clear();
-                  myFocusNode.requestFocus();
-                  list.add(value);
+                  if (!EmailValidator.validate(value, false, true)) {
+                    log.info("invalid mail input:$value");
+                    myFocusNode.requestFocus();
+                    //TODO show snackbar or something?
+                  } else {
+                    Provider.of<EmailListNotifier>(context, listen: false).add(value);
+                    fieldText.clear();
+                    myFocusNode.requestFocus();
+                    list.add(value);
+                  }
                 },
                 textInputAction: TextInputAction.search,
               ),
             ),
             Expanded(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                    //had to set height in advance, lazy listview size would be 0 at start
-                    minHeight: 48.0,
-                    minWidth: 400,
-                    maxHeight: 48.0),
-                child: Container(
-                  margin: const EdgeInsets.fromLTRB(spacingBetweenItemsVertical, 0, 0, 0),
-                  // color: Colors.red,
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      controller: AdjustableScrollController(),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: Provider.of<EmailListNotifier>(context, listen: true).get().length,
-                      itemBuilder: (context, index) {
-                        String currentItem = Provider.of<EmailListNotifier>(context, listen: true).get().elementAt(index);
-                        return Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
-                          child: InputChip(
-                            key: UniqueKey(),
-                            avatar: Text(currentItem),
-                            label: const Icon(Icons.delete),
-                            onSelected: (bool value) {
-                              setState(() {
-                                Provider.of<EmailListNotifier>(context, listen: false).removeAt(index);
-                              });
-                            },
-                          ),
-                        );
-                      }),
+              child: Container(
+                height: 48,
+                margin: const EdgeInsets.fromLTRB(spacingBetweenItemsHorizontal, 0, spacingBetweenItemsHorizontal, 0),
+                decoration: ShapeDecoration(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0), side: BorderSide(width: 1, color: Theme.of(context).colorScheme.tertiary))),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                      //had to set height in advance, lazy listview size would be 0 at start
+                      minHeight: 48.0,
+                      minWidth: 400,
+                      maxHeight: 48.0),
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(spacingBetweenItemsHorizontal, 0, 0, 0),
+                    // color: Colors.red,
+                    child: ListView.builder(
+                        controller: AdjustableScrollController(),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: Provider.of<EmailListNotifier>(context, listen: true).getLength(),
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                            child: InputChip(
+                              key: UniqueKey(),
+                              label: Text(Provider.of<EmailListNotifier>(context, listen: true).getElementAt(index)),
+                              avatar: Icon(
+                                Icons.delete,
+                                color: Theme.of(context).colorScheme.tertiary,
+                                semanticLabel: 'Delete action icon',
+                              ),
+                              onSelected: (bool value) {
+                                setState(() {
+                                  Provider.of<EmailListNotifier>(context, listen: false).removeAt(index);
+                                });
+                              },
+                            ),
+                          );
+                        }),
+                  ),
                 ),
               ),
             ),

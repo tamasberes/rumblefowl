@@ -16,4 +16,12 @@ class EmailListNotifier extends ChangeNotifier {
     emails.add(email);
     notifyListeners();
   }
+
+  String getElementAt(int index) {
+    return emails.elementAt(index);
+  }
+
+  getLength() {
+    return emails.length;
+  }
 }
