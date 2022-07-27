@@ -10,7 +10,6 @@ import 'package:rumblefowl/services/prerferences/preferences_manager.dart';
 import 'package:zefyrka/zefyrka.dart';
 
 import '../../../services/db/mailbox_settings.dart';
-import '../../util/scrollcontroller.dart';
 import 'compose_mail_data.dart';
 import 'email_list_notifier.dart';
 import 'package:email_validator/email_validator.dart';
@@ -33,7 +32,6 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Compose new E-mail")),
       body: Column(children: <Widget>[
         Row(
           children: [
@@ -140,7 +138,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
     return ChangeNotifierProvider(
         create: (_) => EmailListNotifier(),
         builder: (context, child) {
-          return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             createLeadingLabel(label, leadingStyle),
             SizedBox(
               width: inputItemWidth,
@@ -157,7 +155,9 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
                     myFocusNode.requestFocus();
                     //TODO show snackbar or something?
                   } else {
-                    Provider.of<EmailListNotifier>(context, listen: false).add(value);
+                    for (var i = 0; i < 100; i++) {
+                      Provider.of<EmailListNotifier>(context, listen: false).add(value);
+                    }
                     fieldText.clear();
                     myFocusNode.requestFocus();
                     list.add(value);
@@ -170,13 +170,13 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
             Expanded(
                 child: Container(
               margin: const EdgeInsets.fromLTRB(0, 0, spacingBetweenItemsHorizontal, 0),
-              padding: const EdgeInsets.all(spacingBetweenItemsVertical),
+              padding: const EdgeInsets.all(spacingBetweenItemsHorizontal),
               decoration: ShapeDecoration(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0), side: BorderSide(width: 1, color: Theme.of(context).colorScheme.tertiary))),
               child: ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 14),
-                child: Column(
-                  children: [
-                    Wrap(
+                  constraints: const BoxConstraints(minHeight: 28, maxHeight: 56),
+                  child: SingleChildScrollView(
+                    primary: false,
+                    child: Wrap(
                       spacing: spacingBetweenItemsHorizontal,
                       runSpacing: spacingBetweenItemsVertical,
                       crossAxisAlignment: WrapCrossAlignment.start,
@@ -186,10 +186,8 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
                           return getChipItem(context, index);
                         },
                       ),
-                    )
-                  ],
-                ),
-              ),
+                    ),
+                  )),
             ))
           ]);
         });
