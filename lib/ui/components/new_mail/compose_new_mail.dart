@@ -16,7 +16,7 @@ import 'email_list_notifier.dart';
 import 'package:email_validator/email_validator.dart';
 
 final log = Logger('ComposeNewMailWindow');
-const inputItemWidth = 223.0;
+const inputItemWidth = 423.0;
 
 class ComposeNewMailWindow extends StatefulWidget {
   const ComposeNewMailWindow({Key? key}) : super(key: key);
@@ -51,7 +51,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
         Container(height: spacingBetweenItemsVertical),
         getSubject(),
         Container(height: spacingBetweenItemsVertical),
-        Expanded(child: Row(children: [Expanded(child: getWysiwygEditor())]))
+        getWysiwygEditor(),
       ]),
     );
   }
@@ -124,12 +124,13 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
     return SizedBox(
         width: 90,
         child: Padding(
-            padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
-            child: Text(
-              labelText,
-              style: style,
-              textAlign: TextAlign.end,
-            )));
+          padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
+          child: Text(
+            labelText,
+            style: style,
+            textAlign: TextAlign.end,
+          ),
+        ));
   }
 
   Widget getTextInputWithChips(String label, List<String> list) {
@@ -139,7 +140,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
     return ChangeNotifierProvider(
         create: (_) => EmailListNotifier(),
         builder: (context, child) {
-          return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             createLeadingLabel(label, leadingStyle),
             SizedBox(
               width: inputItemWidth,
@@ -156,7 +157,9 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
                     myFocusNode.requestFocus();
                     //TODO show snackbar or something?
                   } else {
-                    Provider.of<EmailListNotifier>(context, listen: false).add(value);
+                    for (var i = 0; i < 100; i++) {
+                      Provider.of<EmailListNotifier>(context, listen: false).add(value);
+                    }
                     fieldText.clear();
                     myFocusNode.requestFocus();
                     list.add(value);
@@ -165,49 +168,50 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
                 textInputAction: TextInputAction.search,
               ),
             ),
+            const SizedBox(width: spacingBetweenItemsHorizontal),
             Expanded(
-              child: Container(
-                height: 48,
-                margin: const EdgeInsets.fromLTRB(spacingBetweenItemsHorizontal, 0, spacingBetweenItemsHorizontal, 0),
-                decoration: ShapeDecoration(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0), side: BorderSide(width: 1, color: Theme.of(context).colorScheme.tertiary))),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                      //had to set height in advance, lazy listview size would be 0 at start
-                      minHeight: 48.0,
-                      minWidth: 400,
-                      maxHeight: 48.0),
-                  child: Container(
-                    margin: const EdgeInsets.fromLTRB(spacingBetweenItemsHorizontal, 0, 0, 0),
-                    // color: Colors.red,
-                    child: ListView.builder(
-                        controller: AdjustableScrollController(),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: Provider.of<EmailListNotifier>(context, listen: true).getLength(),
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
-                            child: InputChip(
-                              key: UniqueKey(),
-                              label: Text(Provider.of<EmailListNotifier>(context, listen: true).getElementAt(index)),
-                              avatar: Icon(
-                                Icons.delete,
-                                color: Theme.of(context).colorScheme.tertiary,
-                                semanticLabel: 'Delete action icon',
-                              ),
-                              onSelected: (bool value) {
-                                setState(() {
-                                  Provider.of<EmailListNotifier>(context, listen: false).removeAt(index);
-                                });
-                              },
-                            ),
-                          );
-                        }),
-                  ),
+                child: Container(
+              margin: const EdgeInsets.fromLTRB(0, 0, spacingBetweenItemsHorizontal, 0),
+              padding: const EdgeInsets.all(spacingBetweenItemsVertical),
+              decoration: ShapeDecoration(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0), side: BorderSide(width: 1, color: Theme.of(context).colorScheme.tertiary))),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 14),
+                child: Column(
+                  children: [
+                    Wrap(
+                      spacing: spacingBetweenItemsHorizontal,
+                      runSpacing: spacingBetweenItemsVertical,
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      children: List<Widget>.generate(
+                        Provider.of<EmailListNotifier>(context, listen: true).getLength(),
+                        (int index) {
+                          return getChipItem(context, index);
+                        },
+                      ),
+                    )
+                  ],
                 ),
               ),
-            ),
+            ))
           ]);
         });
+  }
+
+  Widget getChipItem(BuildContext context, int index) {
+    return InputChip(
+      key: UniqueKey(),
+      label: Text(Provider.of<EmailListNotifier>(context, listen: true).getElementAt(index)),
+      avatar: Icon(
+        Icons.delete,
+        color: Theme.of(context).colorScheme.tertiary,
+        semanticLabel: 'Delete action icon',
+      ),
+      onSelected: (bool value) {
+        setState(() {
+          Provider.of<EmailListNotifier>(context, listen: false).removeAt(index);
+        });
+      },
+    );
   }
 
   Widget getSubject() {
@@ -215,7 +219,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
     return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       createLeadingLabel("Subject:", leadingStyle),
       SizedBox(
-        width: inputItemWidth,
+        width: inputItemWidth * 2,
         child: TextField(
           decoration: decorationForTextFields,
           keyboardType: TextInputType.emailAddress,
@@ -235,20 +239,18 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
 
       //  state.content = converter.encoder(controller.document.toDelta());
     });
-    return Container(
-      color: Colors.grey.shade800,
-      child: Column(
-        children: [
-          ZefyrToolbar.basic(controller: controller),
-          Expanded(
-            child: ZefyrEditor(
-              padding: const EdgeInsets.only(left: 16, right: 16),
-              controller: controller,
-            ),
-          ),
-        ],
-      ),
-    );
+    return Expanded(
+        child: Container(
+            color: Colors.grey.shade800,
+            child: Column(
+              children: [
+                ZefyrToolbar.basic(controller: controller),
+                ZefyrEditor(
+                  padding: const EdgeInsets.only(left: 16, right: 16),
+                  controller: controller,
+                ),
+              ],
+            )));
   }
 
   getActionButtons() {
