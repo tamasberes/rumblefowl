@@ -68,8 +68,8 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
     var values = Hive.box<MailboxSettings>(mailboxesSettingsBoxName).values;
     //use mailbox selected by user
     final leadingStyle = Theme.of(context).textTheme.labelLarge!;
+
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         createLeadingLabel("From:", leadingStyle),
         DropdownButton<String>(
@@ -121,12 +121,15 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
   Widget createLeadingLabel(String labelText, TextStyle style) {
     return SizedBox(
         width: 90,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
-          child: Text(
-            labelText,
-            style: style,
-            textAlign: TextAlign.end,
+        height: 46,
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, spacingBetweenItemsHorizontal, 0),
+            child: Text(
+              labelText,
+              style: style,
+            ),
           ),
         ));
   }
@@ -242,7 +245,10 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
               children: [
                 ZefyrToolbar.basic(controller: controller),
                 ZefyrEditor(
+                  enableInteractiveSelection: true,
                   padding: const EdgeInsets.only(left: 16, right: 16),
+                  scrollController: ScrollController(), //TODO it does not yet scroll for some reason
+                  scrollable: true,
                   controller: controller,
                 ),
               ],
