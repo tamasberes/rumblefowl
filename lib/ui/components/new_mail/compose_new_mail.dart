@@ -140,7 +140,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
     return ChangeNotifierProvider(
         create: (_) => EmailListNotifier(),
         builder: (context, child) {
-          return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             createLeadingLabel(label, leadingStyle),
             SizedBox(
               width: inputItemWidth,
@@ -157,9 +157,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
                     myFocusNode.requestFocus();
                     //TODO show snackbar or something?
                   } else {
-                    for (var i = 0; i < 100; i++) {
-                      Provider.of<EmailListNotifier>(context, listen: false).add(value);
-                    }
+                    Provider.of<EmailListNotifier>(context, listen: false).add(value);
                     fieldText.clear();
                     myFocusNode.requestFocus();
                     list.add(value);
