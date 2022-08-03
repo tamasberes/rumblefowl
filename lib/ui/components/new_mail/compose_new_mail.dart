@@ -218,7 +218,7 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
     return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       createLeadingLabel("Subject:", leadingStyle),
       SizedBox(
-        width: inputItemWidth * 2,
+        width: 702,
         child: TextField(
           decoration: decorationForTextFields,
           keyboardType: TextInputType.emailAddress,
@@ -239,18 +239,24 @@ class _ComposeNewMailWindowState extends State<ComposeNewMailWindow> {
       //  state.content = converter.encoder(controller.document.toDelta());
     });
     return Expanded(
+        flex: 1,
         child: Container(
+            margin: const EdgeInsets.fromLTRB(0, 0, 0, 16),
             color: Colors.grey.shade800,
             child: Column(
               children: [
                 ZefyrToolbar.basic(controller: controller),
-                ZefyrEditor(
+                Expanded(
+                    child: ZefyrEditor(
+                  minHeight: 130,
+                  // maxHeight: 500,
                   enableInteractiveSelection: true,
                   padding: const EdgeInsets.only(left: 16, right: 16),
                   scrollController: ScrollController(), //TODO it does not yet scroll for some reason
                   scrollable: true,
+                  expands: false,
                   controller: controller,
-                ),
+                )),
               ],
             )));
   }
