@@ -22,7 +22,6 @@ class SelectedMailboxWithNotifier with ChangeNotifier {
 
   valuesUpdated() {
     selectedMailbox.save().then((value) => log.info("values are now persisted"));
-    notifyListeners();
   }
 
   SelectedMailboxWithNotifier(this._selectedMailbox);

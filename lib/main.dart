@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:rumblefowl/services/db/hive_manager.dart';
+import 'package:rumblefowl/services/mail/mail_sync.dart';
 import 'package:rumblefowl/services/prerferences/preferences_manager.dart';
 import 'package:rumblefowl/ui/screens/home_screen.dart';
 
@@ -15,14 +16,15 @@ Future<void> main() async {
   setupLogging();
   await HiveManager().init();
   await PreferencesManager().init();
+  await MailSync().init();
   runApp(const MyApp());
   doWhenWindowReady(() {
     const initialSize = Size(800, 600);
     appWindow.minSize = initialSize;
-  //  appWindow.size = initialSize;
+    //  appWindow.size = initialSize;
     appWindow.alignment = Alignment.center;
     appWindow.title = "rumblefowl";
-  //  appWindow.show();
+    //  appWindow.show();
     appWindow.maximize();
   });
 }

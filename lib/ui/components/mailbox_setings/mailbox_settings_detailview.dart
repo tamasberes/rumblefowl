@@ -1,8 +1,12 @@
+import 'package:enough_mail/codecs.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
+import 'package:rumblefowl/services/db/hive_manager.dart';
 import 'package:rumblefowl/ui/components/widgets/elevated_button_with_margin.dart';
 
+import '../../../services/db/mailbox_settings.dart';
 import '../../../services/mail/mail_helper.dart';
 import '../widgets/utils.dart';
 import 'mailbox_settings_dialog.dart';
@@ -140,7 +144,13 @@ class _MailboxSettingsDetailViewState extends State<MailboxSettingsDetailView> {
                           })
                     ]),
                     const SizedBox(height: spacingBetweenItemsVertical),
-                    const TryMailSettingsWidget()
+                    const TryMailSettingsWidget(),
+                    ElevatedButtonWithMargin(
+                        buttonText: "Delete account",
+                        onPressedAction: () {
+                          Hive.box<MailboxSettings>(mailboxesSettingsBoxName).delete(Provider.of<SelectedMailboxWithNotifier>(context, listen: false).selectedMailbox.key);
+                          Provider.of<SelectedMailboxWithNotifier>(context, listen: false).valuesUpdated();
+                        })
                   ])),
             )));
   }
@@ -172,10 +182,17 @@ class TryMailSettingsWidget extends StatelessWidget {
           );
 
           log.info("Try settings clicked");
-          MailHelper().login(Provider.of<SelectedMailboxWithNotifier>(context, listen: false).selectedMailbox).then((value) {
+          MailHelper().tryLogin(Provider.of<SelectedMailboxWithNotifier>(context, listen: false).selectedMailbox).then((value) {
             showSnackbar(Colors.green, Colors.white, "Login succesful!", context);
           }).onError((error, stackTrace) {
-            showSnackbar(Colors.red, Colors.white, "Login failed. Please check your settings!", context);
+            log.warning(error);
+            var message = "";
+            if (error is BaseMailException) {
+              message = error.message;
+            } else {
+              message = error.toString();
+            }
+            showSnackbar(Colors.red, Colors.white, "Login failed. Please check your settings!\nError:$message", context);
           });
         },
         buttonText: "Try settigns");

@@ -36,12 +36,18 @@ class _EmailListState extends State<EmailList> {
           builder: (context, value, child) => FutureBuilder<List<MimeMessage>>(
               future: MailHelper().getFolderContent(Hive.box<MailboxSettings>(mailboxesSettingsBoxName).getAt(changeNotifierProviderInstance.getSelectedMailbox())!, changeNotifierProviderInstance.getSelectedFolder()),
               builder: (context, snapshot) {
-                if (snapshot.hasError) return Text('Error ${snapshot.error}');
+                if (snapshot.hasError) {
+                  log.warning(snapshot.error);
+                  return Text('Error ${snapshot.error}');
+                }
                 if (snapshot.connectionState != ConnectionState.done) {
                   return const Padding(
                     padding: EdgeInsets.all(24.0),
                     child: Center(child: CircularProgressIndicator()),
                   );
+                }
+                if (snapshot.hasData && snapshot.data!.isEmpty) {
+                  return const Text('No emails found');
                 }
                 return ConstrainedBox(
                     constraints: const BoxConstraints(
@@ -67,6 +73,7 @@ class _EmailListState extends State<EmailList> {
                                 setState(() {
                                   selectedIndex = index;
                                 });
+                                log.info("selected item:${currentItem.guid}");
                                 PreferencesManager().setSelectedMailGuid(currentItem.guid!);
                               });
                         }));

@@ -1,19 +1,17 @@
-import 'dart:collection';
-
 import 'package:enough_mail/enough_mail.dart';
 import 'package:hive/hive.dart';
 import 'package:logging/logging.dart';
+import 'package:rumblefowl/services/db/email_object.dart';
 import 'package:rumblefowl/ui/components/new_mail/compose_mail_data.dart';
 
 import '../db/hive_manager.dart';
+import '../db/mailbox_folder.dart';
 import '../db/mailbox_settings.dart';
 
 final log = Logger('MailboxesHeader');
 
 class MailHelper {
-  HashMap<String, MailClient> loggedInMailboxes = HashMap<String, MailClient>();
-
-  Future<MailClient> login(MailboxSettings mailbox) async {
+  Future<MailClient> tryLogin(MailboxSettings mailbox) async {
     final config = await Discover.discover(mailbox.emailAddress);
     if (config == null) {
       log.warning('Unable to auto-discover settings for $mailbox.emailAddress');
@@ -25,7 +23,6 @@ class MailHelper {
     try {
       await mailClient.connect();
       log.info('connected');
-      loggedInMailboxes[mailbox.emailAddress] = mailClient;
       return mailClient;
     } on MailException catch (e) {
       log.info('High level API failed with $e');
@@ -33,26 +30,34 @@ class MailHelper {
     }
   }
 
-  Future<List<Mailbox>> getFoldersForMailbox(MailboxSettings mailbox) async {
-    if (!loggedInMailboxes.containsKey(mailbox.emailAddress)) {
-      await login(mailbox);
+  List<MailboxFolder> getFoldersForMailbox(MailboxSettings mailbox) {
+    //FIXME this does not need to be a future anymore
+    return Hive.box<MailboxFolder>(mailboxFolderBoxName).values.toList();
+  }
+
+  //FIXME this does not need to be a future anymore
+  Future<List<MimeMessage>> getFolderContent(MailboxSettings mailbox, String folder) async {
+    var values = Hive.box<EmailObject>(mailObjectSettingsBoxName).values.where((element) => element.mailboxId == mailbox.emailAddress && element.folderName == folder);
+    if (values.isEmpty) {
+      return Future.value(Future(List<MimeMessage>.empty));
     }
-    return await loggedInMailboxes[mailbox.emailAddress]!.listMailboxes();
+    List<MimeMessage> calculated = [];
+    for (var element in values) {
+      var value = MimeMessage.parseFromText(element.data);
+      value.guid = element.guid;
+      calculated.add(value);
+    }
+    return Future.value(calculated.toList());
   }
 
-  Future<List<MimeMessage>> getFolderContent(MailboxSettings mailboxSettings, String folder) async {
-    var mailbox = await getFoldersForMailbox(mailboxSettings);
-    return await loggedInMailboxes[mailboxSettings.emailAddress]!.fetchMessages(mailbox: mailbox.firstWhere((element) => element.name == folder));
-  }
-
-  Future<MimeMessage> getMail(MailboxSettings mailboxSettings, String folder, int guid) async {
-    var mailbox = await getFoldersForMailbox(mailboxSettings);
-    var messagesInSelectedFolder = await loggedInMailboxes[mailboxSettings.emailAddress]!.fetchMessages(fetchPreference: FetchPreference.full, mailbox: mailbox.firstWhere((element) => element.name == folder));
-    return messagesInSelectedFolder.firstWhere((element) => element.guid == guid);
+  //FIXME this does not need to be a future anymore
+  Future<MimeMessage> getMail(MailboxSettings mailbox, String folder, int guid) async {
+    var result = Hive.box<EmailObject>(mailObjectSettingsBoxName).values.firstWhere((element) => element.key == guid);
+    return Future.value(MimeMessage.parseFromText(result.data));
   }
 
   Future<void> sendMail(int mailboxIndex, ComposeMailData state) async {
-    var mailbox = Hive.box<MailboxSettings>(mailboxesSettingsBoxName).getAt(mailboxIndex)!;
+    /*var mailbox = Hive.box<MailboxSettings>(mailboxesSettingsBoxName).getAt(mailboxIndex)!;
     var messageBuilder = MessageBuilder();
     messageBuilder.from = [];
     messageBuilder.from!.add(MailAddress("", state.fromEmail));
@@ -72,7 +77,7 @@ class MailHelper {
 
     //TODO maybe only add if it's html? but it's duplicated anyway?
     messageBuilder.addTextHtml(state.content);
-    var mailclient = await login(mailbox);
-    await mailclient.sendMessage(messageBuilder.buildMimeMessage());
+    /*var mailclient = await login(mailbox);
+    await mailclient.sendMessage(messageBuilder.buildMimeMessage());*/*/
   }
 }
